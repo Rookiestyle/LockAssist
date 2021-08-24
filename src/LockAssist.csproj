@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- KeePass PLGX Compiler only can build csharp projects up to csharp version 5 -->
+    <LangVersion>5</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PlgxKeePassVersion>2.41</PlgxKeePassVersion>
+    <PlgXOS>
+    </PlgXOS>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4712D887-6685-4CB1-B67B-E981119FE3D2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LockAssist</RootNamespace>
+    <AssemblyName>LockAssist</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\_KeePass_Debug\Plugins\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>5</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleasePlgx|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\_KeePass_Release\Plugins\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>5</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="LockAssistConfig.cs" />
+    <Compile Include="PluginTranslation.cs" />
+    <Compile Include="QuickUnlock.cs" />
+    <Compile Include="UnlockForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UnlockForm.Designer.cs">
+      <DependentUpon>UnlockForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QuickUnlockKeyProv.cs" />
+    <Compile Include="LockAssist.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="OptionsForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="OptionsForm.Designer.cs">
+      <DependentUpon>OptionsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\Debug.cs" />
+    <Compile Include="Utilities\EventHelper.cs" />
+    <Compile Include="Utilities\Tools_Controls.cs" />
+    <Compile Include="Utilities\Tools_Main.cs" />
+    <Compile Include="Utilities\Tools_Options.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\_KeePass_Source\KeePass\KeePass.csproj">
+      <Project>{10938016-dee2-4a25-9a5a-8fd3444379ca}</Project>
+      <Name>KeePass</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="BeforeBuild" Condition=" '$(Configuration)' == 'Debug' ">
+    <Exec Command="..\translationcopy.cmd $(Configuration)" />
+  </Target>
+  <Target Name="AfterBuild" Condition="'$(Configuration)' == 'ReleasePlgx' ">
+    <Exec Command="..\translationcopy.cmd $(Configuration)" />
+    <Exec Command="..\plgxcreate.cmd $(TargetFrameworkVersion.Replace('v', '')) $(PlgxKeePassVersion) $(PlgXOS)" />
+  </Target>
+</Project>
