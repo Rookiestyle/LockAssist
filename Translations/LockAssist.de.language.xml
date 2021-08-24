@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Translation>
+  <!-- 
+    Increment the TranslationVersion every time the translation file is updated
+	Also update the version.info file
+  -->
+  <TranslationVersion>1</TranslationVersion>
+  <item>
+    <key>FirstTimeInfo</key>
+    <value>Quick Unlock bietet verschiedene Konfigurationsmöglichkeiten.
+Bitte wähle eine der Möglichkeiten aus.</value>
+  </item>
+  <item>
+    <key>OptionsQUMode</key>
+    <value>Modus:</value>
+  </item>
+  <item>
+    <key>Active</key>
+    <value>Quick Unlock aktiv</value>
+  </item>
+  <item>
+    <key>KeyProvNoQuickUnlock</key>
+    <value>Keine Quick Unlock Daten vorhanden,
+
+Quick Unlock nicht möglich.</value>
+  </item>
+  <item>
+    <key>OptionsQUReqInfoDB</key>
+    <value>Voraussetzungen für Modus 'Datenbankpasswort':
+- Hauptschlüssel der Datenbank enthält ein Passwort
+- Option 'Hauptpasswort einer Datenbank merken' ist aktiv
+
+Ein vorhandener Quick Unlock Eintrag wird als Fallback genutzt.</value>
+  </item>
+  <item>
+    <key>OptionsQUSettings</key>
+    <value>Quick Unlock</value>
+  </item>
+  <item>
+    <key>OptionsQUModeEntry</key>
+    <value>NUR Quick Unlock Eintrag</value>
+  </item>
+  <item>
+    <key>OptionsQUModeDatabasePW</key>
+    <value>Datenbankpasswort</value>
+  </item>
+  <item>
+    <key>OptionsQUEntryCreated</key>
+    <value>Quick Unlock Eintrag erstellt. 
+
+Bitte bearbeiten und Quick Unlock PIN als Password setzen.</value>
+  </item>
+  <item>
+    <key>OptionsQUSettingsPerDB</key>
+    <value>Konfiguration nur für aktive Datenbank</value>
+  </item>
+  <item>
+    <key>OptionsSwitchDBToGeneral</key>
+    <value>Datenbankspezifische Konfiguration deaktiviert.
+
+Klicke '{0}', um für diese Datenbank die globalen Einstellungen zu nutzen.
+Klicke '{1}', um die Einstellungen dieser Datenbank als neue globalen Einstellungen zu verwenden.</value>
+  </item>
+  <item>
+    <key>OptionsQUPINLength</key>
+    <value>PIN Länge:</value>
+  </item>
+  <item>
+    <key>ButtonUnlock</key>
+    <value>Entsperren</value>
+  </item>
+  <item>
+    <key>UnlockLabel</key>
+    <value>Quick Unlock PIN:</value>
+  </item>
+  <item>
+    <key>OptionsQUEntryCreate</key>
+    <value>Quick Unlock Eintrag nicht gefunden. 
+
+Anlegen?</value>
+  </item>
+  <item>
+    <key>KeyProvNoCreate</key>
+    <value>Dieser Schlüsselprovider kann nicht zum Erstellen von Hauptschlüsseln verwendet werden.</value>
+  </item>
+  <item>
+    <key>OptionsQUInfoRememberPassword</key>
+    <value>'Hauptpasswort einer Datenbank merken' muss aktiv sein (Optionen -&gt; Sicherheit)
+
+Bitte aktiviere diese Einstellung!</value>
+  </item>
+  <item>
+    <key>OptionsQUUseLast</key>
+    <value>Die letzten {0} Zeichen als PIN nutzen</value>
+  </item>
+  <item>
+    <key>OptionsQUUseFirst</key>
+    <value>Die ersten {0} Zeichen als PIN nutzen</value>
+  </item>
+  <item>
+    <key>WrongPIN</key>
+    <value>Die eingegebe PIN war nicht korrekt.
+
+Die Datenbank ist weiterhin gesperrt und kann nur mit dem vollständigen Hauptschlüssel entsperrt werden.</value>
+  </item>
+  <item>
+    <key>FirstTimeInfoRememberPassword</key>
+    <value>Quick Unlock bietet verschiedene Konfigurationsmöglichkeiten.
+Bitte wähle eine der Möglichkeiten aus.</value>
+  </item>
+</Translation>

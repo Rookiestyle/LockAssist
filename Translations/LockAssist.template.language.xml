@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Translation>
+  <!-- 
+    Increment the TranslationVersion every time the translation file is updated
+	Also update the version.info file
+  -->
+  <TranslationVersion>0</TranslationVersion>
+  <item>
+    <key>FirstTimeInfo</key>
+    <value>Quick Unlock offers two operation modes.
+Please choose your preferred way of working.</value>
+  </item>
+  <item>
+    <key>OptionsQUMode</key>
+    <value>Mode:</value>
+  </item>
+  <item>
+    <key>Active</key>
+    <value>Quick Unlock active</value>
+  </item>
+  <item>
+    <key>KeyProvNoQuickUnlock</key>
+    <value>No Quick Unlock key found. 
+
+Quick Unlock is not possible.</value>
+  </item>
+  <item>
+    <key>OptionsQUReqInfoDB</key>
+    <value>Prerequsites for mode 'database password':
+- Database masterkey contains a password
+- Option 'Remember master password' is active
+
+An existing Quick Unlock entry will be used as fallback</value>
+  </item>
+  <item>
+    <key>OptionsQUSettings</key>
+    <value>Quick Unlock</value>
+  </item>
+  <item>
+    <key>OptionsQUModeEntry</key>
+    <value>Quick Unlock entry only</value>
+  </item>
+  <item>
+    <key>OptionsQUModeDatabasePW</key>
+    <value>Database password</value>
+  </item>
+  <item>
+    <key>OptionsQUEntryCreated</key>
+    <value>Quick Unlock entry created. 
+
+Please edit and set Quick Unlock PIN as password</value>
+  </item>
+  <item>
+    <key>OptionsQUSettingsPerDB</key>
+    <value>Settings are DB specific</value>
+  </item>
+  <item>
+    <key>OptionsSwitchDBToGeneral</key>
+    <value>Database specific settings switched off.
+
+Click '{0}' to use the global settings for this database.
+Click '{1}' to make this database's settings the new global settings.</value>
+  </item>
+  <item>
+    <key>OptionsQUPINLength</key>
+    <value>PIN length:</value>
+  </item>
+  <item>
+    <key>ButtonUnlock</key>
+    <value>Unlock</value>
+  </item>
+  <item>
+    <key>UnlockLabel</key>
+    <value>Quick Unlock PIN:</value>
+  </item>
+  <item>
+    <key>OptionsQUEntryCreate</key>
+    <value>Quick Unlock entry could not be found.
+
+Create it now?</value>
+  </item>
+  <item>
+    <key>KeyProvNoCreate</key>
+    <value>This key provider cannot be used to create keys.</value>
+  </item>
+  <item>
+    <key>OptionsQUInfoRememberPassword</key>
+    <value>'Remember master password' needs to be active in Options -&gt; Security.
+Please don't forget to activate this setting.</value>
+  </item>
+  <item>
+    <key>OptionsQUUseLast</key>
+    <value>Use last {0} characters as PIN</value>
+  </item>
+  <item>
+    <key>OptionsQUUseFirst</key>
+    <value>Use first {0} characters as PIN</value>
+  </item>
+  <item>
+    <key>WrongPIN</key>
+    <value>The entered PIN was not correct.
+
+The database stays locked and can only be unlocked with the original masterkey</value>
+  </item>
+</Translation>
