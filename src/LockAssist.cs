@@ -27,6 +27,7 @@ namespace LockAssist
 
 			PluginTranslate.Init(this, KeePass.Program.Translation.Properties.Iso6391Code);
 			Tools.DefaultCaption = PluginTranslate.PluginName;
+			Tools.PluginURL = "https://github.com/rookiestyle/lockassist/";
 
 			m_menu = new ToolStripMenuItem();
 			m_menu.Text = PluginTranslate.PluginName + "...";

@@ -167,7 +167,7 @@ namespace LockAssist
 				if (pb != null)
 				{
 					var pbArray = pb.ReadData();
-					keys.Add(pbArray);
+					keys.Add((byte[])pbArray.Clone());
 					keysLength += pbArray.Length;
 					MemUtil.ZeroByteArray(pbArray);
 				}
