@@ -28,7 +28,13 @@ namespace LockAssist
 			cbPINDBSpecific.Text = PluginTranslate.OptionsQUSettingsPerDB;
 			cbPINMode.Items.Clear();
 			cbPINMode.Items.AddRange(new string[] { PluginTranslate.OptionsQUModeEntry, PluginTranslate.OptionsQUModeDatabasePW });
-		}
+
+			cbQUValidity.Items.Add(PluginTranslate.Minutes);
+			cbQUValidity.Items.Add(PluginTranslate.Hours);
+			cbQUValidity.SelectedIndex = 0;
+			cbQUValidityActive.Text = KeePass.Resources.KPRes.ExpiryTime;
+
+        }
 
 		internal void InitEx(LockAssistConfig options)
 		{
@@ -39,9 +45,21 @@ namespace LockAssist
 			rbPINFront.Checked = !options.QU_UsePasswordFromEnd;
 			cbPINDBSpecific.Checked = options.QU_DBSpecific;
 			FirstTime = LockAssistConfig.FirstTime;
+			cbQUValidityActive.Checked = options.QU_ValiditySeconds > 0;
+			decimal minutes = options.QU_ValiditySeconds / 60;
+			if (minutes < 60)
+            {
+				cbQUValidity.SelectedIndex = 0;
+				nQUValidity.Value = minutes;
+			}
+			else
+			{
+				cbQUValidity.SelectedIndex = 1;
+				nQUValidity.Value = minutes / 60;
+			}
 		}
 
-		internal LockAssistConfig GetOptions()
+		internal LockAssistConfig GetQuickUnlockOptions()
 		{
 			LockAssistConfig options = new LockAssistConfig();
 			options.QU_Active = cbActive.Checked;
@@ -50,6 +68,12 @@ namespace LockAssist
 			options.QU_UsePasswordFromEnd = rbPINEnd.Checked;
 			options.QU_DBSpecific = cbPINDBSpecific.Checked;
 
+			if (cbQUValidityActive.Checked)
+			{
+				if (cbQUValidity.SelectedIndex == 0) options.QU_ValiditySeconds = (int)(nQUValidity.Value * 60);
+				else if (cbQUValidity.SelectedIndex == 1) options.QU_ValiditySeconds = (int)(nQUValidity.Value * 60 * 60);
+			}
+			else options.QU_ValiditySeconds = 0;
 			return options;
 		}
 

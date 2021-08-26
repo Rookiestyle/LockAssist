@@ -61,7 +61,7 @@ namespace LockAssist
 		{
 			PluginDebug.AddInfo("Show options", 0);
 			OptionsForm options = new OptionsForm();
-			options.InitEx(LockAssistConfig.GetOptions(m_host.Database));
+			options.InitEx(LockAssistConfig.GetQuickUnlockOptions(m_host.Database));
 			Tools.AddPluginToOptionsForm(this, options);
 		}
 
@@ -71,8 +71,8 @@ namespace LockAssist
 			bool shown = false;
 			OptionsForm options = (OptionsForm)Tools.GetPluginFromOptions(this, out shown);
 			if (!shown) return;
-			var MyOptions = LockAssistConfig.GetOptions(m_host.Database);
-			LockAssistConfig NewOptions = options.GetOptions();
+			var MyOptions = LockAssistConfig.GetQuickUnlockOptions(m_host.Database);
+			LockAssistConfig NewOptions = options.GetQuickUnlockOptions();
 			bool changedConfig = MyOptions.ConfigChanged(NewOptions, false);
 			bool changedConfigTotal = MyOptions.ConfigChanged(NewOptions, true);
 			PluginDebug.AddInfo("Options form closed", 0, "Config changed: " + changedConfig.ToString(), "Config total changed:" + changedConfigTotal.ToString());

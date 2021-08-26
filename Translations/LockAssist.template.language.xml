@@ -102,4 +102,12 @@ Please don't forget to activate this setting.</value>
 
 The database stays locked and can only be unlocked with the original masterkey</value>
   </item>
+  <item>
+	<key>Hours</key>
+	<value>Hours</value>
+  </item>
+  <item>
+	<key>Minutes</key>
+	<value>Minutes</value>
+  </item>
 </Translation>

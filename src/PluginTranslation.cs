@@ -70,6 +70,8 @@ Please don't forget to activate this setting";
 		public static readonly string WrongPIN = @"The entered PIN was not correct.
 
 The database stays locked and can only be unlocked with the original masterkey";
+		public static readonly string Hours = @"Hours";
+		public static readonly string Minutes = @"Minutes";
 		#endregion
 
 		#region NO changes in this area

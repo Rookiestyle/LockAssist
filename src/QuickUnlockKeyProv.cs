@@ -13,6 +13,7 @@ using KeePassLib.Cryptography.Cipher;
 
 using PluginTranslation;
 using PluginTools;
+using KeePassLib.Serialization;
 
 namespace LockAssist
 {
@@ -33,6 +34,12 @@ namespace LockAssist
 		public bool account = false;
 		public ProtectedBinary PINCheck = null;
 		public bool HasPassword = false;
+		public DateTime dtStart = DateTime.MinValue;
+		public TimeSpan tsValidity = TimeSpan.Zero;
+		public DateTime dtEnd
+        {
+			get { return dtStart == DateTime.MinValue ? DateTime.MaxValue : dtStart + tsValidity; }
+        }
 	}
 
 	public class QuickUnlockKeyProv : KeyProvider
@@ -47,6 +54,15 @@ namespace LockAssist
 
 		private static Dictionary<string, ProtectedBinary> m_hashedKey = new Dictionary<string, ProtectedBinary>();
 		private static Dictionary<string, QuickUnlockOldKeyInfo> m_originalKey = new Dictionary<string, QuickUnlockOldKeyInfo>();
+
+		private static Timer m_timer = new Timer();
+
+		static QuickUnlockKeyProv()
+        {
+			m_timer.Tick += (o, e) => ExpireOutdatedKeys();
+			m_timer.Interval = 1000;
+			m_timer.Start();
+        }
 
 		public override byte[] GetKey(KeyProviderQueryContext ctx)
 		{
@@ -73,6 +89,7 @@ namespace LockAssist
 			m_hashedKey.Remove(ctx.DatabasePath);
 			if (KeePass.UI.GlobalWindowManager.TopWindow is KeePass.Forms.KeyPromptForm && !VerifyPin(ctx, psQuickUnlockKey))
 			{
+				m_originalKey.Remove(ctx.DatabasePath);
 				QuickUnlock.OnKeyFormShown_QU(KeePass.UI.GlobalWindowManager.TopWindow, true);
 				Tools.ShowError(PluginTranslate.WrongPIN);
 				return null;
@@ -80,7 +97,40 @@ namespace LockAssist
 			return DecryptKey(psQuickUnlockKey, encryptedKey).ReadData();
 		}
 
-        private bool VerifyPin(KeyProviderQueryContext ctx, ProtectedString psQuickUnlockKey)
+		private static void RestoreOldMasterKeyInternal(PwDatabase db, IOConnectionInfo ioConnection, QuickUnlockOldKeyInfo quOldKey)
+        {
+			CompositeKey ck = new CompositeKey();
+			if (quOldKey.pwHash != null)
+			{
+				KcpPassword p = null;
+				//Only restore password if the db was actually unlocked using Quick Unlock
+				//This is required so that next time it's locked, we can deduce the Quick Unlock key from the password
+				if (db != null) p = DeserializePassword(quOldKey.pwHash, KeePass.Program.Config.Security.MasterPassword.RememberWhileOpen);
+
+				if ((p == null || p.Password == null) && quOldKey.HasPassword) p = new KcpPassword(new byte[0] { }, KeePass.Program.Config.Security.MasterPassword.RememberWhileOpen);
+				ck.AddUserKey(p);
+			}
+			if (!string.IsNullOrEmpty(quOldKey.keyFile)) ck.AddUserKey(new KcpKeyFile(quOldKey.keyFile));
+			if (quOldKey.account) ck.AddUserKey(new KcpUserAccount());
+
+			if (db != null) db.MasterKey = ck;
+			KeePass.Program.Config.Defaults.SetKeySources(ioConnection, ck);
+		}
+
+		internal static void RestoreOldMasterKey(PwDatabase db, QuickUnlockOldKeyInfo quOldKey)
+        {
+			PluginDebug.AddInfo("Quick Unlock: DB opened, restore encrypted master key");
+			KcpCustomKey ck = (KcpCustomKey)db.MasterKey.GetUserKey(typeof(KcpCustomKey));
+			if ((ck == null) || (ck.Name != QuickUnlockKeyProv.KeyProviderName))
+			{
+				//Quick Unlock was not used
+				return;
+			}
+			db.MasterKey.RemoveUserKey(ck); 
+			RestoreOldMasterKeyInternal(db, db.IOConnectionInfo, quOldKey);
+		}
+
+		private bool VerifyPin(KeyProviderQueryContext ctx, ProtectedString psQuickUnlockKey)
         {
 			//Verify Quick Unlock PIN
 			QuickUnlockOldKeyInfo quOldKey = null;
@@ -89,8 +139,9 @@ namespace LockAssist
 			return StrUtil.Utf8.GetString(comparePIN) == KeyProviderName;
 		}
 
-		public static QuickUnlockOldKeyInfo GetOldKey(PwDatabase db)
+		internal static QuickUnlockOldKeyInfo GetOldKey(PwDatabase db)
 		{
+			ExpireOutdatedKeys();
 			QuickUnlockOldKeyInfo quOldKey = null;
 			if (!m_originalKey.TryGetValue(db.IOConnectionInfo.Path, out quOldKey)) return null;
 			if ((quOldKey.pwHash != null) && (quOldKey.pwHash.Length != 0))
@@ -99,8 +150,9 @@ namespace LockAssist
 				return quOldKey;
 		}
 
-		public static void AddDb(PwDatabase db, ProtectedString QuickUnlockKey, bool savePw)
+		internal static void AddDb(PwDatabase db, ProtectedString QuickUnlockKey, bool savePw)
 		{
+			ExpireOutdatedKeys();
 			RemoveDb(db);
 			ProtectedBinary pbKey = CreateMasterKeyHash(db.MasterKey);
 			m_hashedKey.Add(db.IOConnectionInfo.Path, EncryptKey(QuickUnlockKey, pbKey));
@@ -121,23 +173,52 @@ namespace LockAssist
 				quOldKey.keyFile = (db.MasterKey.GetUserKey(typeof(KcpKeyFile)) as KcpKeyFile).Path;
 			quOldKey.account = db.MasterKey.ContainsType(typeof(KcpUserAccount));
 			quOldKey.PINCheck = EncryptKey(QuickUnlockKey, new ProtectedBinary(true, m_PINCheck));
+			int iValidity = LockAssistConfig.GetQuickUnlockOptions(db).QU_ValiditySeconds;
+			if (iValidity > 0)
+            {
+				quOldKey.dtStart = DateTime.UtcNow;
+				quOldKey.tsValidity = new TimeSpan(0, 0, iValidity);
+            }
+			else
+            {
+				quOldKey.dtStart = DateTime.MinValue;
+				quOldKey.tsValidity = TimeSpan.Zero;
+            }
 			m_originalKey.Add(db.IOConnectionInfo.Path, quOldKey);
 		}
 
-		public static void Clear()
+		internal static void Clear()
 		{
 			m_hashedKey.Clear();
 			m_originalKey.Clear();
 		}
 
-		public static bool HasDB(string db)
+		internal static bool HasDB(string db)
 		{
+			ExpireOutdatedKeys();
 			if (m_hashedKey.ContainsKey(db)) return true;
 			m_originalKey.Remove(db);
 			return false;
 		}
 
-		public static void RemoveDb(PwDatabase db)
+		private static void ExpireOutdatedKeys()
+        {
+			lock (m_originalKey)
+            {
+				string[] aKeys = new string[m_originalKey.Count];
+				m_originalKey.Keys.CopyTo(aKeys, 0);
+				foreach (string db in aKeys)
+                {
+					QuickUnlockOldKeyInfo quOldKey = m_originalKey[db];
+					if (quOldKey.dtEnd >= DateTime.UtcNow) continue;
+					RestoreOldMasterKeyInternal(null, IOConnectionInfo.FromPath(db), quOldKey);
+					RemoveDb(db);
+					PluginDebug.AddInfo("Quick Unlock - Removed Quick Unlock data", 10, "Database: " + db, "Reason: Timeout");
+				}
+            }
+		}
+
+		internal static void RemoveDb(PwDatabase db)
 		{
 			if (db == null) return;
 			if (!string.IsNullOrEmpty(db.IOConnectionInfo.Path))
@@ -150,7 +231,7 @@ namespace LockAssist
 			RemoveDb(doc.LockedIoc.Path);
 		}
 
-		public static void RemoveDb(string ioc)
+		private static void RemoveDb(string ioc)
 		{
 			bool bRemoved = m_hashedKey.Remove(ioc);
 			bRemoved |= m_originalKey.Remove(ioc);
@@ -202,7 +283,7 @@ namespace LockAssist
 			return p.KeyData;
 		}
 
-		public static KcpPassword DeserializePassword(ProtectedBinary serialized, bool setPassword)
+		private static KcpPassword DeserializePassword(ProtectedBinary serialized, bool setPassword)
 		{
 			//if password is stored and should be retrieved 
 			//simply create a new instance

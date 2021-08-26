@@ -4,7 +4,7 @@
     Increment the TranslationVersion every time the translation file is updated
 	Also update the version.info file
   -->
-  <TranslationVersion>1</TranslationVersion>
+  <TranslationVersion>2</TranslationVersion>
   <item>
     <key>FirstTimeInfo</key>
     <value>Quick Unlock bietet verschiedene Konfigurationsmöglichkeiten.
@@ -107,5 +107,13 @@ Die Datenbank ist weiterhin gesperrt und kann nur mit dem vollständigen Hauptsc
     <key>FirstTimeInfoRememberPassword</key>
     <value>Quick Unlock bietet verschiedene Konfigurationsmöglichkeiten.
 Bitte wähle eine der Möglichkeiten aus.</value>
+  </item>
+  <item>
+	<key>Hours</key>
+	<value>Stunden</value>
+  </item>
+  <item>
+	<key>Minutes</key>
+	<value>Minuten</value>
   </item>
 </Translation>

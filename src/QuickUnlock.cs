@@ -46,7 +46,7 @@ namespace LockAssist
 		#region Eventhandler for opening and closing a DB
 		private void OnFileOpened_QU(object sender, FileOpenedEventArgs e)
 		{
-			var MyOptions = LockAssistConfig.GetOptions(e.Database);
+			var MyOptions = LockAssistConfig.GetQuickUnlockOptions(e.Database);
 			if (LockAssistConfig.FirstTime &&
 				(!MyOptions.QU_UsePassword && (GetQuickUnlockEntry(e.Database) == null)
 				|| (MyOptions.QU_UsePassword && !Program.Config.Security.MasterPassword.RememberWhileOpen)))
@@ -63,24 +63,7 @@ namespace LockAssist
 				PluginDebug.AddInfo("Quick Unlock: DB opened, no encrypted master key available to restore");
 				return;
 			}
-			PluginDebug.AddInfo("Quick Unlock: DB opened, restore encrypted master key");
-			KcpCustomKey ck = (KcpCustomKey)e.Database.MasterKey.GetUserKey(typeof(KcpCustomKey));
-			if ((ck == null) || (ck.Name != QuickUnlockKeyProv.KeyProviderName))
-			{
-				//Quick Unlock was not used
-				return;
-			}
-			e.Database.MasterKey.RemoveUserKey(ck);
-			if (quOldKey.pwHash != null)
-			{
-				KcpPassword p;
-				p = QuickUnlockKeyProv.DeserializePassword(quOldKey.pwHash, Program.Config.Security.MasterPassword.RememberWhileOpen);
-				if (p.Password == null && quOldKey.HasPassword) p = new KcpPassword(new byte[0] { }, Program.Config.Security.MasterPassword.RememberWhileOpen);
-				e.Database.MasterKey.AddUserKey(p);
-			}
-			if (!string.IsNullOrEmpty(quOldKey.keyFile)) e.Database.MasterKey.AddUserKey(new KcpKeyFile(quOldKey.keyFile));
-			if (quOldKey.account) e.Database.MasterKey.AddUserKey(new KcpUserAccount());
-			Program.Config.Defaults.SetKeySources(e.Database.IOConnectionInfo, e.Database.MasterKey);
+			QuickUnlockKeyProv.RestoreOldMasterKey(e.Database, quOldKey);
 		}
 
 		private void OnFileClosePre_QU(object sender, FileClosingEventArgs e)
@@ -93,7 +76,7 @@ namespace LockAssist
 				QuickUnlockKeyProv.RemoveDb(e.Database);
 				return;
 			}
-			var MyOptions = LockAssistConfig.GetOptions(e.Database);
+			var MyOptions = LockAssistConfig.GetQuickUnlockOptions(e.Database);
 			if (!MyOptions.QU_Active) return;
 			ProtectedString QuickUnlockKey = null;
 			if (Program.Config.Security.MasterPassword.RememberWhileOpen && MyOptions.QU_UsePassword)

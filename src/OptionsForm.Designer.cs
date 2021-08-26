@@ -30,9 +30,12 @@
 		{
             this.tcLockAssistOptions = new System.Windows.Forms.TabControl();
             this.tabQuickUnlock = new System.Windows.Forms.TabPage();
-            this.cbPINDBSpecific = new System.Windows.Forms.CheckBox();
             this.tbModeExplain = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.cbPINDBSpecific = new System.Windows.Forms.CheckBox();
+            this.cbQUValidity = new System.Windows.Forms.ComboBox();
+            this.nQUValidity = new System.Windows.Forms.NumericUpDown();
+            this.cbQUValidityActive = new System.Windows.Forms.CheckBox();
             this.cbActive = new System.Windows.Forms.CheckBox();
             this.lQUPINLength = new System.Windows.Forms.Label();
             this.lQUMode = new System.Windows.Forms.Label();
@@ -43,6 +46,7 @@
             this.tcLockAssistOptions.SuspendLayout();
             this.tabQuickUnlock.SuspendLayout();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nQUValidity)).BeginInit();
             this.SuspendLayout();
             // 
             // tcLockAssistOptions
@@ -50,7 +54,7 @@
             this.tcLockAssistOptions.Controls.Add(this.tabQuickUnlock);
             this.tcLockAssistOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tcLockAssistOptions.Location = new System.Drawing.Point(0, 0);
-            this.tcLockAssistOptions.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.tcLockAssistOptions.Margin = new System.Windows.Forms.Padding(5);
             this.tcLockAssistOptions.Name = "tcLockAssistOptions";
             this.tcLockAssistOptions.SelectedIndex = 0;
             this.tcLockAssistOptions.Size = new System.Drawing.Size(853, 697);
@@ -59,36 +63,23 @@
             // tabQuickUnlock
             // 
             this.tabQuickUnlock.BackColor = System.Drawing.Color.Transparent;
-            this.tabQuickUnlock.Controls.Add(this.cbPINDBSpecific);
             this.tabQuickUnlock.Controls.Add(this.tbModeExplain);
             this.tabQuickUnlock.Controls.Add(this.panel2);
             this.tabQuickUnlock.Location = new System.Drawing.Point(10, 48);
-            this.tabQuickUnlock.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.tabQuickUnlock.Margin = new System.Windows.Forms.Padding(5);
             this.tabQuickUnlock.Name = "tabQuickUnlock";
-            this.tabQuickUnlock.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.tabQuickUnlock.Padding = new System.Windows.Forms.Padding(5);
             this.tabQuickUnlock.Size = new System.Drawing.Size(833, 639);
             this.tabQuickUnlock.TabIndex = 0;
             this.tabQuickUnlock.Text = "Quick Unlock settings";
             this.tabQuickUnlock.UseVisualStyleBackColor = true;
             // 
-            // cbPINDBSpecific
-            // 
-            this.cbPINDBSpecific.AutoSize = true;
-            this.cbPINDBSpecific.Location = new System.Drawing.Point(20, 490);
-            this.cbPINDBSpecific.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
-            this.cbPINDBSpecific.Name = "cbPINDBSpecific";
-            this.cbPINDBSpecific.Size = new System.Drawing.Size(354, 36);
-            this.cbPINDBSpecific.TabIndex = 5;
-            this.cbPINDBSpecific.Text = "Settings are DB specific";
-            this.cbPINDBSpecific.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.cbPINDBSpecific.UseVisualStyleBackColor = true;
-            // 
             // tbModeExplain
             // 
             this.tbModeExplain.Dock = System.Windows.Forms.DockStyle.Top;
             this.tbModeExplain.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.tbModeExplain.Location = new System.Drawing.Point(5, 284);
-            this.tbModeExplain.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.tbModeExplain.Location = new System.Drawing.Point(5, 407);
+            this.tbModeExplain.Margin = new System.Windows.Forms.Padding(5);
             this.tbModeExplain.Multiline = true;
             this.tbModeExplain.Name = "tbModeExplain";
             this.tbModeExplain.ReadOnly = true;
@@ -101,6 +92,10 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.cbPINDBSpecific);
+            this.panel2.Controls.Add(this.cbQUValidity);
+            this.panel2.Controls.Add(this.nQUValidity);
+            this.panel2.Controls.Add(this.cbQUValidityActive);
             this.panel2.Controls.Add(this.cbActive);
             this.panel2.Controls.Add(this.lQUPINLength);
             this.panel2.Controls.Add(this.lQUMode);
@@ -110,16 +105,61 @@
             this.panel2.Controls.Add(this.cbPINMode);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(5, 5);
-            this.panel2.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.panel2.Margin = new System.Windows.Forms.Padding(5);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(823, 279);
+            this.panel2.Size = new System.Drawing.Size(823, 402);
             this.panel2.TabIndex = 35;
+            // 
+            // cbPINDBSpecific
+            // 
+            this.cbPINDBSpecific.AutoSize = true;
+            this.cbPINDBSpecific.Location = new System.Drawing.Point(14, 338);
+            this.cbPINDBSpecific.Margin = new System.Windows.Forms.Padding(5);
+            this.cbPINDBSpecific.Name = "cbPINDBSpecific";
+            this.cbPINDBSpecific.Size = new System.Drawing.Size(354, 36);
+            this.cbPINDBSpecific.TabIndex = 46;
+            this.cbPINDBSpecific.Text = "Settings are DB specific";
+            this.cbPINDBSpecific.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.cbPINDBSpecific.UseVisualStyleBackColor = true;
+            // 
+            // cbQUValidity
+            // 
+            this.cbQUValidity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbQUValidity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbQUValidity.FormattingEnabled = true;
+            this.cbQUValidity.Location = new System.Drawing.Point(357, 278);
+            this.cbQUValidity.Name = "cbQUValidity";
+            this.cbQUValidity.Size = new System.Drawing.Size(456, 39);
+            this.cbQUValidity.TabIndex = 45;
+            // 
+            // nQUValidity
+            // 
+            this.nQUValidity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.nQUValidity.DecimalPlaces = 2;
+            this.nQUValidity.Location = new System.Drawing.Point(189, 276);
+            this.nQUValidity.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            0});
+            this.nQUValidity.Name = "nQUValidity";
+            this.nQUValidity.Size = new System.Drawing.Size(142, 38);
+            this.nQUValidity.TabIndex = 44;
+            // 
+            // cbQUValidityActive
+            // 
+            this.cbQUValidityActive.AutoSize = true;
+            this.cbQUValidityActive.Location = new System.Drawing.Point(14, 278);
+            this.cbQUValidityActive.Name = "cbQUValidityActive";
+            this.cbQUValidityActive.Size = new System.Drawing.Size(155, 36);
+            this.cbQUValidityActive.TabIndex = 43;
+            this.cbQUValidityActive.Text = "Validity:";
             // 
             // cbActive
             // 
             this.cbActive.AutoSize = true;
             this.cbActive.Location = new System.Drawing.Point(14, 17);
-            this.cbActive.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.cbActive.Margin = new System.Windows.Forms.Padding(5);
             this.cbActive.Name = "cbActive";
             this.cbActive.Size = new System.Drawing.Size(317, 36);
             this.cbActive.TabIndex = 42;
@@ -153,7 +193,7 @@
             this.rbPINEnd.AutoSize = true;
             this.rbPINEnd.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.rbPINEnd.Location = new System.Drawing.Point(483, 225);
-            this.rbPINEnd.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.rbPINEnd.Margin = new System.Windows.Forms.Padding(5);
             this.rbPINEnd.Name = "rbPINEnd";
             this.rbPINEnd.Size = new System.Drawing.Size(334, 36);
             this.rbPINEnd.TabIndex = 39;
@@ -167,7 +207,7 @@
             this.rbPINFront.AutoSize = true;
             this.rbPINFront.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.rbPINFront.Location = new System.Drawing.Point(484, 178);
-            this.rbPINFront.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.rbPINFront.Margin = new System.Windows.Forms.Padding(5);
             this.rbPINFront.Name = "rbPINFront";
             this.rbPINFront.Size = new System.Drawing.Size(335, 36);
             this.rbPINFront.TabIndex = 38;
@@ -179,7 +219,7 @@
             // 
             this.tbPINLength.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tbPINLength.Location = new System.Drawing.Point(639, 129);
-            this.tbPINLength.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.tbPINLength.Margin = new System.Windows.Forms.Padding(5);
             this.tbPINLength.MaxLength = 3;
             this.tbPINLength.Name = "tbPINLength";
             this.tbPINLength.Size = new System.Drawing.Size(175, 38);
@@ -197,7 +237,7 @@
             "Quick Unlock entry only",
             "Database password"});
             this.cbPINMode.Location = new System.Drawing.Point(189, 64);
-            this.cbPINMode.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.cbPINMode.Margin = new System.Windows.Forms.Padding(5);
             this.cbPINMode.Name = "cbPINMode";
             this.cbPINMode.Size = new System.Drawing.Size(624, 39);
             this.cbPINMode.TabIndex = 36;
@@ -209,7 +249,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.tcLockAssistOptions);
-            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "OptionsForm";
             this.Size = new System.Drawing.Size(853, 697);
             this.Load += new System.EventHandler(this.UnlockOptions_Load);
@@ -218,6 +258,7 @@
             this.tabQuickUnlock.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nQUValidity)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -225,7 +266,6 @@
 		#endregion
 		private System.Windows.Forms.TabControl tcLockAssistOptions;
 		private System.Windows.Forms.TabPage tabQuickUnlock;
-		private System.Windows.Forms.CheckBox cbPINDBSpecific;
 		private System.Windows.Forms.TextBox tbModeExplain;
 		private System.Windows.Forms.Panel panel2;
 		private System.Windows.Forms.CheckBox cbActive;
@@ -235,5 +275,9 @@
 		private System.Windows.Forms.RadioButton rbPINFront;
 		private System.Windows.Forms.TextBox tbPINLength;
 		internal System.Windows.Forms.ComboBox cbPINMode;
-	}
+        private System.Windows.Forms.ComboBox cbQUValidity;
+        private System.Windows.Forms.NumericUpDown nQUValidity;
+        private System.Windows.Forms.CheckBox cbQUValidityActive;
+        private System.Windows.Forms.CheckBox cbPINDBSpecific;
+    }
 }
