@@ -43,15 +43,22 @@
             this.rbPINFront = new System.Windows.Forms.RadioButton();
             this.tbPINLength = new System.Windows.Forms.TextBox();
             this.cbPINMode = new System.Windows.Forms.ComboBox();
+            this.tabLockWorkspace = new System.Windows.Forms.TabPage();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.cbLockWorkspace = new System.Windows.Forms.CheckBox();
+            this.tbLockWorkspace = new System.Windows.Forms.TextBox();
             this.tcLockAssistOptions.SuspendLayout();
             this.tabQuickUnlock.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nQUValidity)).BeginInit();
+            this.tabLockWorkspace.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tcLockAssistOptions
             // 
             this.tcLockAssistOptions.Controls.Add(this.tabQuickUnlock);
+            this.tcLockAssistOptions.Controls.Add(this.tabLockWorkspace);
             this.tcLockAssistOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tcLockAssistOptions.Location = new System.Drawing.Point(0, 0);
             this.tcLockAssistOptions.Margin = new System.Windows.Forms.Padding(5);
@@ -243,6 +250,52 @@
             this.cbPINMode.TabIndex = 36;
             this.cbPINMode.SelectedIndexChanged += new System.EventHandler(this.cbPINMode_SelectedIndexChanged);
             // 
+            // tabLockWorkspace
+            // 
+            this.tabLockWorkspace.BackColor = System.Drawing.Color.Transparent;
+            this.tabLockWorkspace.Controls.Add(this.tbLockWorkspace);
+            this.tabLockWorkspace.Controls.Add(this.panel1);
+            this.tabLockWorkspace.Location = new System.Drawing.Point(10, 48);
+            this.tabLockWorkspace.Margin = new System.Windows.Forms.Padding(5);
+            this.tabLockWorkspace.Name = "tabLockWorkspace";
+            this.tabLockWorkspace.Padding = new System.Windows.Forms.Padding(5);
+            this.tabLockWorkspace.Size = new System.Drawing.Size(833, 639);
+            this.tabLockWorkspace.TabIndex = 0;
+            this.tabLockWorkspace.Text = "Lock Workspace";
+            this.tabLockWorkspace.UseVisualStyleBackColor = true;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.cbLockWorkspace);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(5, 5);
+            this.panel1.Margin = new System.Windows.Forms.Padding(5);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(823, 87);
+            this.panel1.TabIndex = 36;
+            // 
+            // cbLockWorkspace
+            // 
+            this.cbLockWorkspace.AutoSize = true;
+            this.cbLockWorkspace.Location = new System.Drawing.Point(14, 17);
+            this.cbLockWorkspace.Margin = new System.Windows.Forms.Padding(5);
+            this.cbLockWorkspace.Name = "cbLockWorkspace";
+            this.cbLockWorkspace.Size = new System.Drawing.Size(261, 36);
+            this.cbLockWorkspace.TabIndex = 42;
+            this.cbLockWorkspace.Text = "Lock Workspace";
+            this.cbLockWorkspace.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.cbLockWorkspace.UseVisualStyleBackColor = true;
+            // 
+            // tbLockWorkspace
+            // 
+            this.tbLockWorkspace.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tbLockWorkspace.Location = new System.Drawing.Point(5, 92);
+            this.tbLockWorkspace.Multiline = true;
+            this.tbLockWorkspace.Name = "tbLockWorkspace";
+            this.tbLockWorkspace.ReadOnly = true;
+            this.tbLockWorkspace.Size = new System.Drawing.Size(823, 259);
+            this.tbLockWorkspace.TabIndex = 37;
+            // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(16F, 31F);
@@ -259,6 +312,10 @@
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nQUValidity)).EndInit();
+            this.tabLockWorkspace.ResumeLayout(false);
+            this.tabLockWorkspace.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -266,6 +323,8 @@
 		#endregion
 		private System.Windows.Forms.TabControl tcLockAssistOptions;
 		private System.Windows.Forms.TabPage tabQuickUnlock;
+        private System.Windows.Forms.TabPage tabLockWorkspace; 
+        private System.Windows.Forms.CheckBox cbPINDBSpecific;
 		private System.Windows.Forms.TextBox tbModeExplain;
 		private System.Windows.Forms.Panel panel2;
 		private System.Windows.Forms.CheckBox cbActive;
@@ -278,6 +337,8 @@
         private System.Windows.Forms.ComboBox cbQUValidity;
         private System.Windows.Forms.NumericUpDown nQUValidity;
         private System.Windows.Forms.CheckBox cbQUValidityActive;
-        private System.Windows.Forms.CheckBox cbPINDBSpecific;
+        private System.Windows.Forms.TextBox tbLockWorkspace;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.CheckBox cbLockWorkspace;
     }
 }

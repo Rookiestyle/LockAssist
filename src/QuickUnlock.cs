@@ -39,7 +39,6 @@ namespace LockAssist
 			Program.KeyProviderPool.Add(m_kp);
 			Program.MainForm.FileClosingPre += OnFileClosePre_QU;
 			Program.MainForm.FileOpened += OnFileOpened_QU;
-			GlobalWindowManager.WindowAdded += OnWindowAdded_QU;
 			PluginDebug.AddInfo("Quick Unlock: Initialized", 0);
 		}
 
@@ -95,14 +94,8 @@ namespace LockAssist
 		#endregion
 
 		#region Unlock / KeyPromptForm
-		private void OnWindowAdded_QU(object sender, GwmWindowEventArgs e)
-		{
-			if (!(e.Form is KeyPromptForm) && !(e.Form is KeyCreationForm)) return;
-			PluginDebug.AddInfo(e.Form.GetType().Name + " added", 0);
-			e.Form.Shown += (o, x) => OnKeyFormShown_QU(o, false);
-		}
 
-		public static void OnKeyFormShown_QU(object sender, bool resetFile)
+		public static void OnKeyFormShown(object sender, bool resetFile)
 		{
 			Form keyform = (sender as Form);
 			try
@@ -239,7 +232,6 @@ namespace LockAssist
 			QuickUnlockKeyProv.Clear();
 			Program.MainForm.FileClosingPre -= OnFileClosePre_QU;
 			Program.MainForm.FileOpened -= OnFileOpened_QU;
-			GlobalWindowManager.WindowAdded -= OnWindowAdded_QU;
 			PluginDebug.AddInfo("Quick Unlock: Terminated", 0);
 		}
 	}

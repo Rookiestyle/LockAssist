@@ -7,6 +7,7 @@ using KeePass.UI;
 
 using PluginTranslation;
 using PluginTools;
+using KeePass.Resources;
 
 namespace LockAssist
 {
@@ -32,12 +33,22 @@ namespace LockAssist
 			cbQUValidity.Items.Add(PluginTranslate.Minutes);
 			cbQUValidity.Items.Add(PluginTranslate.Hours);
 			cbQUValidity.SelectedIndex = 0;
-			cbQUValidityActive.Text = KeePass.Resources.KPRes.ExpiryTime;
+			cbQUValidityActive.Text = KPRes.ExpiryTime;
 
-        }
+
+			tabLockWorkspace.Text = KPRes.LockWorkspace;
+			cbLockWorkspace.Text = string.Format(PluginTranslate.OptionsLockWorkspace, KPRes.LockWorkspace, KPRes.LockMenuUnlock);
+			tbLockWorkspace.Lines = string.Format(PluginTranslate.OptionsLockWorkspaceDesc, KPRes.LockWorkspace, KPRes.LockMenuUnlock).Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+		}
 
 		internal void InitEx(LockAssistConfig options)
 		{
+			Init_QuickUnlock(options);
+			Init_LockWorkspace();
+		}
+
+        private void Init_QuickUnlock(LockAssistConfig options)
+        {
 			cbActive.Checked = options.QU_Active;
 			cbPINMode.SelectedIndex = options.QU_UsePassword ? 1 : 0;
 			tbPINLength.Text = options.QU_PINLength.ToString();
@@ -48,7 +59,7 @@ namespace LockAssist
 			cbQUValidityActive.Checked = options.QU_ValiditySeconds > 0;
 			decimal minutes = options.QU_ValiditySeconds / 60;
 			if (minutes < 60)
-            {
+			{
 				cbQUValidity.SelectedIndex = 0;
 				nQUValidity.Value = minutes;
 			}
@@ -59,7 +70,12 @@ namespace LockAssist
 			}
 		}
 
-		internal LockAssistConfig GetQuickUnlockOptions()
+		private void Init_LockWorkspace()
+        {
+			cbLockWorkspace.Checked = LockAssistConfig.LW_Active;
+		}
+
+        internal LockAssistConfig GetQuickUnlockOptions()
 		{
 			LockAssistConfig options = new LockAssistConfig();
 			options.QU_Active = cbActive.Checked;
@@ -76,6 +92,11 @@ namespace LockAssist
 			else options.QU_ValiditySeconds = 0;
 			return options;
 		}
+
+		internal bool GetLockWorkspace()
+        {
+			return cbLockWorkspace.Checked;
+        }
 
 		private void tbPINLength_TextChanged(object sender, EventArgs e)
 		{

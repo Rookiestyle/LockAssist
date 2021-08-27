@@ -7,6 +7,8 @@ using PluginTranslation;
 using PluginTools;
 using System.Drawing;
 using System;
+using KeePass.UI;
+using KeePass.Forms;
 
 namespace LockAssist
 {
@@ -17,6 +19,7 @@ namespace LockAssist
 		private static bool Terminated { get { return m_host == null; } }
 
 		private QuickUnlock _qu = null;
+		private LockWorkspace _lw = null;
 
 		//private static LockAssistOptions m_options;
 
@@ -32,22 +35,56 @@ namespace LockAssist
 			m_menu = new ToolStripMenuItem();
 			m_menu.Text = PluginTranslate.PluginName + "...";
 			m_menu.Click += (o, e) => Tools.ShowOptions();
-			m_menu.Image = m_host.MainWindow.ClientIcons.Images[(int)PwIcon.LockOpen];
+			var tsbLockWorkspace = (ToolStripButton)Tools.GetField("m_tbLockWorkspace", m_host.MainWindow);
+			if (tsbLockWorkspace != null) m_menu.Image = (Image)tsbLockWorkspace.Image;
+			else m_menu.Image = m_host.MainWindow.ClientIcons.Images[(int)PwIcon.LockOpen];
 			m_host.MainWindow.ToolsMenu.DropDownItems.Add(m_menu);
 
 			Tools.OptionsFormShown += OptionsFormShown;
 			Tools.OptionsFormClosed += OptionsFormClosed;
 
+			GlobalWindowManager.WindowAdded += OnWindowAdded;
+
 			_qu = new QuickUnlock();
+			_lw = new LockWorkspace();
 
 			return true;
 		}
 
-		public override void Terminate()
+        private void OnWindowAdded(object sender, GwmWindowEventArgs e)
+        {
+			if (!(e.Form is KeyPromptForm) && !(e.Form is KeyCreationForm)) return;
+			PluginDebug.AddInfo(e.Form.GetType().Name + " added", 0);
+			e.Form.Shown += OnKeyFormShown_QU;
+		}
+
+        private void OnKeyFormShown_QU(object sender, EventArgs e)
+        {
+			KeyPromptForm fKeyPromptForm = sender as KeyPromptForm;
+			if (fKeyPromptForm == null) return;
+			bool bStopGlobalUnlock;
+			LockWorkspace.CheckGlobalUnlock(out bStopGlobalUnlock);
+			if (bStopGlobalUnlock)
+			{
+				GlobalWindowManager.RemoveWindow(sender as Form);
+				fKeyPromptForm.Close();
+				fKeyPromptForm.Dispose();
+				_lw.OnEnhancedWorkspaceLockUnlock(sender, null);
+				return;
+			}
+			LockWorkspace.OnKeyFormShown(sender, e);
+			QuickUnlock.OnKeyFormShown(sender, false);
+        }
+
+        public override void Terminate()
 		{
 			Tools.OptionsFormShown -= OptionsFormShown;
 			Tools.OptionsFormClosed -= OptionsFormClosed;
 
+			GlobalWindowManager.WindowAdded -= OnWindowAdded;
+
+			_lw.Clear();
+			_lw = null;
 			_qu.Clear();
 			_qu = null;
 
@@ -89,6 +126,12 @@ namespace LockAssist
 				MyOptions.DeleteDBConfig(m_host.Database);
 			}
 			else MyOptions.WriteConfig(m_host.Database);
+
+			if (LockAssistConfig.LW_Active != options.GetLockWorkspace())
+			{
+				LockAssistConfig.LW_Active = !LockAssistConfig.LW_Active;
+				_lw.ActivateNewLockWorkspace(LockAssistConfig.LW_Active);
+			}
 		}
 #endregion
 
