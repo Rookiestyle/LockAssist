@@ -4,8 +4,9 @@
 [![Downloads](https://img.shields.io/github/downloads/rookiestyle/lockassist/total?color=%2300cc00)](https://github.com/rookiestyle/lockassist/releases/latest/download/lockassist.plgx)\
 [![License: GPL v3](https://img.shields.io/github/license/rookiestyle/lockassist)](https://www.gnu.org/licenses/gpl-3.0)
 
-LockAssist extends KeePass' lock/unlock mechanism and currently offers a Quick Unlock option.  
-Additional features will follow soon.
+LockAssist extends KeePass' lock/unlock mechanism in multiple ways:  
+- Quick Unlock
+- (Un)lock workspace can handle ALL databases or only the selected one
 
 # Table of Contents
 - [Configuration](#configuration)
@@ -26,6 +27,14 @@ You can unlock your database with a only a few characters instead - your quick u
 Have a look at the [Wiki](https://github.com/rookiestyle/lockassist/wiki/quick-unlock) to learn why this does not impose security risks.
 
 <img src="images/LockAssist%20-%20quick%20unlock.png" alt="Options" height="50%" width="50%"/>  
+
+## Lock workspace
+This option changes the behaviour of 'Lock Workspace' for both the menu entry as well as the toolbar button.
+If it's active ALL loaded databases are locked / unlocked by using these commands.
+
+In this case it depends on the active document's state whether a global lock or global unlock is performed.
+
+If the [Shift] key is pressed while using these commands only the active document is processed.
 
 # Translations
 LockAssist is provided with english language built-in and allows usage of translation files.
