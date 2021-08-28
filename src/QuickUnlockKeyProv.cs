@@ -31,6 +31,8 @@ namespace LockAssist
 		public ProtectedString QuickUnlockKey = ProtectedString.EmptyEx;
 		public ProtectedBinary pwHash = null;
 		public string keyFile = string.Empty;
+		public string CustomKeyProviderName = string.Empty;
+		public ProtectedBinary CustomKeyProviderData = null;
 		public bool account = false;
 		public ProtectedBinary PINCheck = null;
 		public bool HasPassword = false;
@@ -111,6 +113,12 @@ namespace LockAssist
 				ck.AddUserKey(p);
 			}
 			if (!string.IsNullOrEmpty(quOldKey.keyFile)) ck.AddUserKey(new KcpKeyFile(quOldKey.keyFile));
+			if (!string.IsNullOrEmpty(quOldKey.CustomKeyProviderName))
+			{
+				var ckHashedData = quOldKey.CustomKeyProviderData.ReadData();
+				ck.AddUserKey(new KcpCustomKey(quOldKey.CustomKeyProviderName, ckHashedData, false));
+				MemUtil.ZeroByteArray(ckHashedData);
+			}
 			if (quOldKey.account) ck.AddUserKey(new KcpUserAccount());
 
 			if (db != null) db.MasterKey = ck;
@@ -147,7 +155,7 @@ namespace LockAssist
 			if ((quOldKey.pwHash != null) && (quOldKey.pwHash.Length != 0))
 				quOldKey.pwHash = DecryptKey(quOldKey.QuickUnlockKey, quOldKey.pwHash);
 			m_originalKey.Remove(db.IOConnectionInfo.Path);
-				return quOldKey;
+			return quOldKey;
 		}
 
 		internal static void AddDb(PwDatabase db, ProtectedString QuickUnlockKey, bool savePw)
@@ -171,6 +179,11 @@ namespace LockAssist
 			}
 			if (db.MasterKey.ContainsType(typeof(KcpKeyFile)))
 				quOldKey.keyFile = (db.MasterKey.GetUserKey(typeof(KcpKeyFile)) as KcpKeyFile).Path;
+			if (db.MasterKey.ContainsType(typeof(KcpCustomKey)))
+			{
+				quOldKey.CustomKeyProviderName = (db.MasterKey.GetUserKey(typeof(KcpCustomKey)) as KcpCustomKey).Name;
+				quOldKey.CustomKeyProviderData = (db.MasterKey.GetUserKey(typeof(KcpCustomKey)) as KcpCustomKey).KeyData;
+			}
 			quOldKey.account = db.MasterKey.ContainsType(typeof(KcpUserAccount));
 			quOldKey.PINCheck = EncryptKey(QuickUnlockKey, new ProtectedBinary(true, m_PINCheck));
 			int iValidity = LockAssistConfig.GetQuickUnlockOptions(db).QU_ValiditySeconds;
