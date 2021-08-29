@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Translation>
+  <!-- 
+    Increment the TranslationVersion every time the translation file is updated
+	Also update the version.info file
+  -->
+  <TranslationVersion>0</TranslationVersion>
+  <item>
+    <key>FirstTimeInfo</key>
+    <value>Desloqueio Rápido (Quick Unlock) oferece dois modos de operação.
+Por favor, escolha sua maneira preferida de trabalhar.</value>
+  </item>
+  <item>
+    <key>OptionsQUMode</key>
+    <value>Modo:</value>
+  </item>
+  <item>
+    <key>Active</key>
+    <value>Quick Unlock ativo</value>
+  </item>
+  <item>
+    <key>KeyProvNoQuickUnlock</key>
+    <value>Nenhuma chave de desbloqueio rápida encontrada. 
+
+Desbloqueio Rápido não é possível.</value>
+  </item>
+  <item>
+    <key>OptionsQUReqInfoDB</key>
+    <value>Pré-requisitos para modo 'senha do banco de dados':
+- Chave-mestre do banco de dados contém uma senha
+- Opção 'Lembre-se Chave Mestra' está ativa
+
+Uma entrada de desbloqueio rápida existente será usada como reserva.</value>
+  </item>
+  <item>
+    <key>OptionsQUSettings</key>
+    <value>Desbloqueio Rápido</value>
+  </item>
+  <item>
+    <key>OptionsQUModeEntry</key>
+    <value>Desbloqueio Rápido entrada somente</value>
+  </item>
+  <item>
+    <key>OptionsQUModeDatabasePW</key>
+    <value>Senha do Banco de Dados</value>
+  </item>
+  <item>
+    <key>OptionsQUEntryCreated</key>
+    <value>Entrada de Desbloqueio Rápido criada. 
+
+Por favor, edite e defina o PIN de desbloqueio rápido como senha</value>
+  </item>
+  <item>
+    <key>OptionsQUSettingsPerDB</key>
+    <value>Configurações são específicas por BD</value>
+  </item>
+  <item>
+    <key>OptionsSwitchDBToGeneral</key>
+    <value>Configurações específicas por banco de dados desligadas.
+
+Clique '{0}' para usar as configurações globais para este banco de dados.
+Clique '{1}' para tornar as configurações deste banco de dados as novas configurações globais.</value>
+  </item>
+  <item>
+    <key>OptionsQUPINLength</key>
+    <value>Comprimento do PIN:</value>
+  </item>
+  <item>
+    <key>ButtonUnlock</key>
+    <value>Desbloquear</value>
+  </item>
+  <item>
+    <key>UnlockLabel</key>
+    <value>PIN de Desbloqueio Rápido:</value>
+  </item>
+  <item>
+    <key>OptionsQUEntryCreate</key>
+    <value>Entrada de Desbloqueio Rápido não pode ser encontrada.
+
+Criar agora?</value>
+  </item>
+  <item>
+    <key>KeyProvNoCreate</key>
+    <value>Este provedor chave não pode ser usado para criar chaves.</value>
+  </item>
+  <item>
+    <key>OptionsQUInfoRememberPassword</key>
+    <value>'Lembre-se de senha mestre' precisa ser ativo em Opções -&gt; Segurança.
+Por favor, não se esqueça de ativar essa configuração.</value>
+  </item>
+  <item>
+    <key>OptionsQUUseLast</key>
+    <value>Use os últimos {0} caracteres como PIN</value>
+  </item>
+  <item>
+    <key>OptionsQUUseFirst</key>
+    <value>Use os primeiros {0} caracteres como PIN</value>
+  </item>
+  <item>
+    <key>WrongPIN</key>
+    <value>O PIN inserido não estava correto.
+
+O banco de dados permanece bloqueado e só pode ser desbloqueado com a chave-mestre original</value>
+  </item>
+  <item>
+	<key>Hours</key>
+	<value>Horas</value>
+  </item>
+  <item>
+	<key>Minutes</key>
+	<value>Minutos</value>
+  </item>
+  <item>
+	<key>OptionsLockWorkspace</key>
+	<value>Global '{0} / {1}'</value>
+  </item>
+  <item>
+	<key>OptionsLockWorkspaceDesc</key>
+	<value>Esta opção altera o comportamento de '{0} / {1}' para a entrada do menu, bem como o botão da barra de ferramentas.
+
+Se estiver ativo, TODOS os bancos de dados carregados serão bloqueados / desbloqueados usando esses comandos.
+Nesse caso, depende do estado do documento ativo se é realizado um bloqueio global ou desbloqueio global.
+
+Se a tecla [SHIFT] for pressionada ao usar esses comandos, somente o documento ativo será processado.</value>
+  </item>
+</Translation>
