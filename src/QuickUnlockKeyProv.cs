@@ -41,7 +41,7 @@ namespace LockAssist
 		public DateTime dtEnd
         {
 			get { return dtStart == DateTime.MinValue ? DateTime.MaxValue : dtStart + tsValidity; }
-        }
+	}
 	}
 
 	public class QuickUnlockKeyProv : KeyProvider
@@ -92,7 +92,7 @@ namespace LockAssist
 			if (KeePass.UI.GlobalWindowManager.TopWindow is KeePass.Forms.KeyPromptForm && !VerifyPin(ctx, psQuickUnlockKey))
 			{
 				m_originalKey.Remove(ctx.DatabasePath);
-				QuickUnlock.OnKeyFormShown_QU(KeePass.UI.GlobalWindowManager.TopWindow, true);
+				QuickUnlock.OnKeyFormShown(KeePass.UI.GlobalWindowManager.TopWindow, true);
 				Tools.ShowError(PluginTranslate.WrongPIN);
 				return null;
 			}
@@ -138,7 +138,7 @@ namespace LockAssist
 			RestoreOldMasterKeyInternal(db, db.IOConnectionInfo, quOldKey);
 		}
 
-		private bool VerifyPin(KeyProviderQueryContext ctx, ProtectedString psQuickUnlockKey)
+        private bool VerifyPin(KeyProviderQueryContext ctx, ProtectedString psQuickUnlockKey)
         {
 			//Verify Quick Unlock PIN
 			QuickUnlockOldKeyInfo quOldKey = null;
@@ -155,7 +155,7 @@ namespace LockAssist
 			if ((quOldKey.pwHash != null) && (quOldKey.pwHash.Length != 0))
 				quOldKey.pwHash = DecryptKey(quOldKey.QuickUnlockKey, quOldKey.pwHash);
 			m_originalKey.Remove(db.IOConnectionInfo.Path);
-			return quOldKey;
+				return quOldKey;
 		}
 
 		internal static void AddDb(PwDatabase db, ProtectedString QuickUnlockKey, bool savePw)
@@ -215,7 +215,7 @@ namespace LockAssist
 		}
 
 		private static void ExpireOutdatedKeys()
-        {
+		{
 			lock (m_originalKey)
             {
 				string[] aKeys = new string[m_originalKey.Count];

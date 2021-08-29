@@ -133,5 +133,13 @@ namespace LockAssist
 		private const string LockAssistQU_ValiditySeconds = "LockAssist.QU_validitySeconds";
 		private const string LockAssistFirstTime = "LockAssist.FirstTime";
 		private const string LockAssistQuickUnlockDBSpecific = "LockAssist.QuickUnlockDBSpecific";
+
+		private const string LockAssistLockWorkspaceActive = "LockAssist.LockWorkspaceActive";
+
+		public static bool LW_Active
+        {
+			get { return _config.GetBool(LockAssistLockWorkspaceActive, true); }
+			set { _config.SetBool(LockAssistLockWorkspaceActive, value); }
+        }
 	}
 }

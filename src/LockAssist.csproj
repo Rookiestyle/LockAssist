@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LockAssistConfig.cs" />
+    <Compile Include="LockWorkspace.cs" />
     <Compile Include="PluginTranslation.cs" />
     <Compile Include="QuickUnlock.cs" />
     <Compile Include="UnlockForm.cs">

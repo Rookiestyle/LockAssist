@@ -72,6 +72,13 @@ Please don't forget to activate this setting";
 The database stays locked and can only be unlocked with the original masterkey";
 		public static readonly string Hours = @"Hours";
 		public static readonly string Minutes = @"Minutes";
+		public static readonly string OptionsLockWorkspace = @"Global '{0} / {1}'";
+		public static readonly string OptionsLockWorkspaceDesc = @"This option changes the behaviour of '{0}' for both the menu entry as well as the toolbar button.
+
+If it's active ALL loaded databases are locked / unlocked by using these commands.
+In this case it depends on the active document's state whether a global lock or global unlock is performed.
+
+If the [Shift] key is pressed while using these commands only the active document is processed.";
 		#endregion
 
 		#region NO changes in this area

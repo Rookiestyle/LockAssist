@@ -4,7 +4,7 @@
     Increment the TranslationVersion every time the translation file is updated
 	Also update the version.info file
   -->
-  <TranslationVersion>2</TranslationVersion>
+  <TranslationVersion>3</TranslationVersion>
   <item>
     <key>FirstTimeInfo</key>
     <value>Quick Unlock bietet verschiedene Konfigurationsmöglichkeiten.
@@ -115,5 +115,18 @@ Bitte wähle eine der Möglichkeiten aus.</value>
   <item>
 	<key>Minutes</key>
 	<value>Minuten</value>
+  </item>
+  <item>
+	<key>OptionsLockWorkspace</key>
+	<value>Global '{0} / {1}'</value>
+  </item>
+  <item>
+	<key>OptionsLockWorkspaceDesc</key>
+	<value>Diese Option ändert das Verhalten des Buttons und des Menüeintrags '{0} / {1}'.
+	
+Ist sie aktiv, dann werden beim Nutzen dieser Kommandos ALLE Datenbanken gesperrt bzw. entsperrt.
+Es hängt vom Sperrstatus der aktiven Datenbank ab, ob gesperrt oder entsperrt wird.
+
+Halte die [Shift]-Taste gedrückt, um nur die aktive Datenbank zu sperren / entsperren.</value>
   </item>
 </Translation>
