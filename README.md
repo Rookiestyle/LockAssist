@@ -29,12 +29,13 @@ Have a look at the [Wiki](https://github.com/rookiestyle/lockassist/wiki/quick-u
 <img src="images/LockAssist%20-%20quick%20unlock.png" alt="Options" height="50%" width="50%"/>  
 
 ## Lock workspace
-This option changes the behaviour of 'Lock Workspace' for both the menu entry as well as the toolbar button.
-If it's active ALL loaded databases are locked / unlocked by using these commands.
+By default, 'Lock workspace' will lock all loaded databases whereas 'Unlock workspace' will only unlock the currently selected database.  
 
-In this case it depends on the active document's state whether a global lock or global unlock is performed.
+LockAssist changes the behaviour of 'Lock Workspace' for both the menu entry as well as the toolbar button.  
+If this option is active ALL loaded databases are locked / unlocked by using these commands.  
+It depends on the active document's state whether a global lock or global unlock is performed.
 
-If the [Shift] key is pressed while using these commands only the active document is processed.
+Hold the [Shift] key pressed to only lock / unlock the active document.
 
 # Translations
 LockAssist is provided with english language built-in and allows usage of translation files.
