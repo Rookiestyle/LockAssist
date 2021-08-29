@@ -4,7 +4,7 @@
     Increment the TranslationVersion every time the translation file is updated
 	Also update the version.info file
   -->
-  <TranslationVersion>0</TranslationVersion>
+  <TranslationVersion>1</TranslationVersion>
   <item>
     <key>FirstTimeInfo</key>
     <value>Desloqueio Rápido (Quick Unlock) oferece dois modos de operação.
