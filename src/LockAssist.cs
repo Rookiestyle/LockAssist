@@ -55,25 +55,23 @@ namespace LockAssist
         {
 			if (!(e.Form is KeyPromptForm) && !(e.Form is KeyCreationForm)) return;
 			PluginDebug.AddInfo(e.Form.GetType().Name + " added", 0);
-			e.Form.Shown += OnKeyFormShown_QU;
+			e.Form.Shown += OnKeyFormShown;
 		}
 
-        private void OnKeyFormShown_QU(object sender, EventArgs e)
+        private void OnKeyFormShown(object sender, EventArgs e)
         {
-			KeyPromptForm fKeyPromptForm = sender as KeyPromptForm;
-			if (fKeyPromptForm == null) return;
-			bool bStopGlobalUnlock;
-			LockWorkspace.CheckGlobalUnlock(out bStopGlobalUnlock);
-			if (bStopGlobalUnlock)
+			Form f = sender as Form;
+			if (f == null) return;
+			if ((f is KeyPromptForm) && LockWorkspace.ShallStopGlobalUnlock())
 			{
 				GlobalWindowManager.RemoveWindow(sender as Form);
-				fKeyPromptForm.Close();
-				fKeyPromptForm.Dispose();
+				f.Close();
+				f.Dispose();
 				_lw.OnEnhancedWorkspaceLockUnlock(sender, null);
 				return;
 			}
-			LockWorkspace.OnKeyFormShown(sender, e);
-			QuickUnlock.OnKeyFormShown(sender, false);
+			LockWorkspace.OnKeyFormShown(f, e);
+			QuickUnlock.OnKeyFormShown(f, false);
         }
 
         public override void Terminate()

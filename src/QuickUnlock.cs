@@ -95,38 +95,37 @@ namespace LockAssist
 
 		#region Unlock / KeyPromptForm
 
-		public static void OnKeyFormShown(object sender, bool resetFile)
+		public static void OnKeyFormShown(Form f, bool resetFile)
 		{
-			Form keyform = (sender as Form);
 			try
 			{
-				ComboBox cmbKeyFile = (ComboBox)Tools.GetControl("m_cmbKeyFile", keyform);
+				ComboBox cmbKeyFile = (ComboBox)Tools.GetControl("m_cmbKeyFile", f);
 				if (cmbKeyFile == null)
 				{
-					PluginDebug.AddError("Cant't find m_cmbKeyFile'", 0, "Form: " + keyform.GetType().Name);
+					PluginDebug.AddError("Cant't find m_cmbKeyFile'", 0, "Form: " + f.GetType().Name);
 					return;
 				}
 				int index = cmbKeyFile.Items.IndexOf(QuickUnlockKeyProv.KeyProviderName);
 				//Quick Unlock cannot be used to create a key ==> Remove it from list of key providers
-				if (keyform is KeyCreationForm)
+				if (f is KeyCreationForm)
 				{
 					PluginDebug.AddInfo("Removing Quick Unlock from key providers", 0);
 					if (index == -1) return;
 					cmbKeyFile.Items.RemoveAt(index);
-					List<string> keyfiles = (List<string>)Tools.GetField("m_lKeyFileNames", keyform);
+					List<string> keyfiles = (List<string>)Tools.GetField("m_lKeyFileNames", f);
 					if (keyfiles != null) keyfiles.Remove(QuickUnlockKeyProv.KeyProviderName);
 					return;
 				}
 
 				//Key prompt form is shown
-				IOConnectionInfo dbIOInfo = (IOConnectionInfo)Tools.GetField("m_ioInfo", keyform);
+				IOConnectionInfo dbIOInfo = (IOConnectionInfo)Tools.GetField("m_ioInfo", f);
 				//If Quick Unlock is possible show the Quick Unlock form
 				if ((index != -1) && (dbIOInfo != null) && QuickUnlockKeyProv.HasDB(dbIOInfo.Path))
 				{
 					cmbKeyFile.SelectedIndex = index;
-					CheckBox cbPassword = (CheckBox)Tools.GetControl("m_cbPassword", keyform);
-					CheckBox cbAccount = (CheckBox)Tools.GetControl("m_cbUserAccount", keyform);
-					Button bOK = (Button)Tools.GetControl("m_btnOK", keyform);
+					CheckBox cbPassword = (CheckBox)Tools.GetControl("m_cbPassword", f);
+					CheckBox cbAccount = (CheckBox)Tools.GetControl("m_cbUserAccount", f);
+					Button bOK = (Button)Tools.GetControl("m_btnOK", f);
 					if ((bOK != null) && (cbPassword != null) && (cbAccount != null))
 					{
 						UIUtil.SetChecked(cbPassword, false);
@@ -136,7 +135,7 @@ namespace LockAssist
 					else
 					{
 						PluginDebug.AddError("Quick Unlock form cannot be shown", 0, 
-							"Form: "+keyform.GetType().Name,
+							"Form: " + f.GetType().Name,
 							"Password checkbox: " + (cbPassword == null ? "null" : cbPassword.Name + " / " + cbPassword.GetType().Name),
 							"Account checkbox: " + (cbAccount == null ? "null" : cbAccount.Name + " / " + cbAccount.GetType().Name),
 							"OK button: " + (bOK == null ? "null" : bOK.Name + " / " + bOK.GetType().Name)
@@ -149,7 +148,7 @@ namespace LockAssist
 				if ((resetFile || ((dbIOInfo != null) && !QuickUnlockKeyProv.HasDB(dbIOInfo.Path))) && (index != -1))
 				{
 					cmbKeyFile.Items.RemoveAt(index);
-					List<string> keyfiles = (List<string>)Tools.GetField("m_lKeyFileNames", keyform);
+					List<string> keyfiles = (List<string>)Tools.GetField("m_lKeyFileNames", f);
 					if (keyfiles != null) keyfiles.Remove(QuickUnlockKeyProv.KeyProviderName);
 					if (resetFile) cmbKeyFile.SelectedIndex = 0;
 				}

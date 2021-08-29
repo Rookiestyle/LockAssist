@@ -185,6 +185,7 @@ namespace LockAssist
 			if (_mf.DocumentManager.DocumentCount < 2)
 			{
 				miOnFileLock.Invoke(_mf, new object[] { sender, e });
+				m_bGlobalUnlockRunning = false; 
 				return;
 			}
 			bool bSingle = (Control.ModifierKeys & Keys.Shift) == Keys.Shift;
@@ -194,6 +195,7 @@ namespace LockAssist
 			if (!bSingle && !bActiveLocked)
 			{
 				miOnFileLock.Invoke(_mf, new object[] { sender, e });
+				m_bGlobalUnlockRunning = false; 
 				return;
 			}
 
@@ -201,6 +203,7 @@ namespace LockAssist
 			if (bSingle && bActiveLocked)
 			{
 				miOnFileLock.Invoke(_mf, new object[] { sender, e });
+				m_bGlobalUnlockRunning = false;
 				return;
 			}
 
@@ -209,7 +212,11 @@ namespace LockAssist
 			{
 				if (!(bool)miIsCommandTypeInvokable.Invoke(_mf, new object[] { null, 1 })) { return; }
 				PwDatabase pd = doc.Database;
-				if (!pd.IsOpen) return; // Nothing to lock
+				if (!pd.IsOpen)
+				{
+					m_bGlobalUnlockRunning = false;
+					return; // Nothing to lock
+				}
 				IOConnectionInfo ioIoc = pd.IOConnectionInfo;
 				miCloseDocument.Invoke(_mf, new object[] { doc, true, false, false, false });
 				if (!pd.IsOpen)
@@ -220,6 +227,7 @@ namespace LockAssist
 						!_mf.IsAtLeastOneFileOpen())
 						UIUtil.SetWindowState(_mf, FormWindowState.Minimized);
 				}
+				m_bGlobalUnlockRunning = false; 
 				return;
 			}
 
@@ -257,36 +265,27 @@ namespace LockAssist
 		}
 
 		private static bool m_bGlobalUnlockRunning = false;
-		internal static void CheckGlobalUnlock(out bool bStopGlobalUnlock)
+		private static List<string> _Methods = new List<string>() { "StopGlobalUnlock", "OnFileLock", "OnTabMainSelectedIndexChanged", "OnSelectedIndexChanged" };
+		internal static bool ShallStopGlobalUnlock()
 		{
-			bStopGlobalUnlock = false;
-			if (m_bGlobalUnlockRunning) return;
-			if (m_bContinueUnlock) return;
-			if (_mf.DocumentManager.GetOpenDatabases().Count == _mf.DocumentManager.Documents.Count) return;
+			if (m_bGlobalUnlockRunning) return false;
+			if (m_bContinueUnlock) return false;
+			if (_mf.DocumentManager.GetOpenDatabases().Count == _mf.DocumentManager.Documents.Count) return false;
+
+			//Get relevant callstack data
 			System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace(1);
-			try
-			{
-				foreach (System.Diagnostics.StackFrame sf in st.GetFrames())
-				{
-					string sMethodName = sf.GetMethod().Name;
-					if (sMethodName == "CheckGlobalUnlock")
-					{
-						bStopGlobalUnlock = false;
-						return;
-					}
-					if (sMethodName == "OnFileLock")
-					{
-						bStopGlobalUnlock = true;
-					}
-					if ((sMethodName == "OnTabMainSelectedIndexChanged") || (sMethodName == "OnSelectedIndexChanged"))
-					{
-						bStopGlobalUnlock = false;
-						break;
-					}
-				}
-			}
-			catch { }
-			return;
+			var lMethods = st.GetFrames().Select(x => x.GetMethod().Name).Where(x => _Methods.Contains(x)).ToList();
+
+			//Stop Global Unlock if
+			//	'OnFileLock' has been found
+			//	AND
+			//	no other relevant methods was found
+			//
+			// E. g. OnFileLock is called by OnTabMainSelectedIndexChanged and no Global Unlock shall be done in that case
+			bool bStop = lMethods.Contains("OnFileLock") && lMethods.Count == 1;
+			lMethods.Insert(0, bStop.ToString());
+			PluginDebug.AddInfo("StopGlobalUnlock", 0, lMethods.ToArray());
+			return bStop;
 		}
 	}
 
