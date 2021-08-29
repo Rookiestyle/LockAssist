@@ -27,17 +27,17 @@ namespace LockAssist
 	*/
 	internal partial class QuickUnlock
 	{
-		private  QuickUnlockKeyProv m_kp = null;
+		private QuickUnlockKeyProv m_kp = null;
 
 		public QuickUnlock()
-        {
+		{
 			Init();
-        }
+		}
 		private void Init()
 		{
 			m_kp = new QuickUnlockKeyProv();
 			Program.KeyProviderPool.Add(m_kp);
-			Program.MainForm.FileClosingPre += OnFileClosePre_QU;
+			Program.MainForm.FileClosingPost += OnFileClosePost_QU;
 			Program.MainForm.FileOpened += OnFileOpened_QU;
 			PluginDebug.AddInfo("Quick Unlock: Initialized", 0);
 		}
@@ -65,7 +65,7 @@ namespace LockAssist
 			QuickUnlockKeyProv.RestoreOldMasterKey(e.Database, quOldKey);
 		}
 
-		private void OnFileClosePre_QU(object sender, FileClosingEventArgs e)
+		private void OnFileClosePost_QU(object sender, FileClosingEventArgs e)
 		{
 			//Do quick unlock only in case of locking
 			//Do NOT do quick unlock in case of closing the database
@@ -95,7 +95,7 @@ namespace LockAssist
 
 		#region Unlock / KeyPromptForm
 
-		public static void OnKeyFormShown(Form f, bool resetFile)
+		public static void OnKeyFormShown(Form f, bool bRestoreKeySources)
 		{
 			try
 			{
@@ -134,7 +134,7 @@ namespace LockAssist
 					}
 					else
 					{
-						PluginDebug.AddError("Quick Unlock form cannot be shown", 0, 
+						PluginDebug.AddError("Quick Unlock form cannot be shown", 0,
 							"Form: " + f.GetType().Name,
 							"Password checkbox: " + (cbPassword == null ? "null" : cbPassword.Name + " / " + cbPassword.GetType().Name),
 							"Account checkbox: " + (cbAccount == null ? "null" : cbAccount.Name + " / " + cbAccount.GetType().Name),
@@ -145,12 +145,29 @@ namespace LockAssist
 				}
 
 				//Quick Unlock is not possible => Remove it from list of key providers
-				if ((resetFile || ((dbIOInfo != null) && !QuickUnlockKeyProv.HasDB(dbIOInfo.Path))) && (index != -1))
+				if ((bRestoreKeySources || ((dbIOInfo != null) && !QuickUnlockKeyProv.HasDB(dbIOInfo.Path))) && (index != -1))
 				{
 					cmbKeyFile.Items.RemoveAt(index);
 					List<string> keyfiles = (List<string>)Tools.GetField("m_lKeyFileNames", f);
 					if (keyfiles != null) keyfiles.Remove(QuickUnlockKeyProv.KeyProviderName);
-					if (resetFile) cmbKeyFile.SelectedIndex = 0;
+
+					//Restore previously saved key sources in case Quick Unlock failed
+					if (bRestoreKeySources)
+					{
+						var ks = Program.Config.Defaults.GetKeySources(dbIOInfo);
+						if (ks == null)
+						{
+							cmbKeyFile.SelectedIndex = 0;
+						}
+						else
+						{
+							string sItem = ks.KeyFilePath;
+							if (string.IsNullOrEmpty(sItem)) sItem = ks.KeyProvider;
+							cmbKeyFile.SelectedIndex = Math.Max(0, cmbKeyFile.Items.IndexOf(sItem));
+							if (ks.UserAccount) (Tools.GetControl("m_cbUserAccount", f) as CheckBox).Checked = true;
+							if (ks.Password) (Tools.GetControl("m_cbPassword", f) as CheckBox).Checked = true;
+						}
+					}
 				}
 			}
 			catch (Exception ex)
@@ -229,7 +246,7 @@ namespace LockAssist
 			Program.KeyProviderPool.Remove(m_kp);
 			m_kp = null;
 			QuickUnlockKeyProv.Clear();
-			Program.MainForm.FileClosingPre -= OnFileClosePre_QU;
+			Program.MainForm.FileClosingPost -= OnFileClosePost_QU;
 			Program.MainForm.FileOpened -= OnFileOpened_QU;
 			PluginDebug.AddInfo("Quick Unlock: Terminated", 0);
 		}
