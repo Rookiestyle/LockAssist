@@ -15,8 +15,8 @@ namespace LockAssist
 {
 	internal class LockWorkspace
 	{
-		internal const string c_LockAssistContinueUnlockWorkbench = "cbLockAssistContinueUnlockWorkbench";
-		internal static bool m_bContinueUnlock = false;
+		private const string c_LockAssistContinueUnlockWorkbench = "cbLockAssistContinueUnlockWorkbench";
+		private static bool m_bContinueUnlock = false;
 		private Dictionary<Component, EventHandlerList> m_EventHandlerList = new Dictionary<Component, EventHandlerList>();
 		private Dictionary<Component, EventHandlers> m_EventHandlers = new Dictionary<Component, EventHandlers>();
 		private static MethodInfo miIsCommandTypeInvokable = null;
@@ -100,6 +100,7 @@ namespace LockAssist
 			if (LockAssistConfig.LW_Active) ActivateNewLockWorkspace(LockAssistConfig.LW_Active);
 		}
 
+		private static CheckBox m_cbContinueUnlock = null;
         internal static void OnKeyFormShown(object sender, EventArgs e)
         {
 			if (!LockAssistConfig.LW_Active) return;
@@ -107,23 +108,23 @@ namespace LockAssist
 
 			KeyPromptForm fKeyPromptForm = sender as KeyPromptForm;
 			if (fKeyPromptForm == null) return;
-			
+
 			//Create checkbox to continue/stop global unlock
-			CheckBox cbContinueUnlock = new CheckBox();
-			cbContinueUnlock.AutoSize = true;
-			cbContinueUnlock.Text = KeePass.Resources.KPRes.LockMenuUnlock;
-			cbContinueUnlock.Checked = true;
-			cbContinueUnlock.Name = c_LockAssistContinueUnlockWorkbench;
-			cbContinueUnlock.CheckedChanged += (o1, e1) => { m_bContinueUnlock = cbContinueUnlock.Checked; };
-			cbContinueUnlock.Checked = cbContinueUnlock.Checked;
+			m_cbContinueUnlock = new CheckBox();
+			m_cbContinueUnlock.AutoSize = true;
+			m_cbContinueUnlock.Text = KeePass.Resources.KPRes.LockMenuUnlock;
+			m_cbContinueUnlock.Checked = true;
+			m_cbContinueUnlock.Name = c_LockAssistContinueUnlockWorkbench;
+			m_cbContinueUnlock.CheckedChanged += (o1, e1) => { SetContinueUnlock(m_cbContinueUnlock.Checked); };
+			m_cbContinueUnlock.Checked = m_cbContinueUnlock.Checked;
 
 			//calculate checkbox position
 			CheckBox m_cbKeyFile = (CheckBox)Tools.GetControl("m_cbKeyFile", fKeyPromptForm);
 			CheckBox cbAccount = (CheckBox)Tools.GetControl("m_cbUserAccount", fKeyPromptForm);
-			cbContinueUnlock.Left = cbAccount.Left;
+			m_cbContinueUnlock.Left = cbAccount.Left;
 			int iIncrement = cbAccount.Top - m_cbKeyFile.Top;
-			cbContinueUnlock.Top = cbAccount.Top + iIncrement;
-			cbContinueUnlock.TabIndex = cbAccount.TabIndex + 1;
+			m_cbContinueUnlock.Top = cbAccount.Top + iIncrement;
+			m_cbContinueUnlock.TabIndex = cbAccount.TabIndex + 1;
 			
 			//Adjust position of all relevent controls
 			cbAccount.Parent.Height += iIncrement;
@@ -133,10 +134,10 @@ namespace LockAssist
 				c.Top += iIncrement;
 				c.TabIndex++;
             }
-			cbAccount.Parent.Controls.Add(cbContinueUnlock);
+			cbAccount.Parent.Controls.Add(m_cbContinueUnlock);
 		}
 
-        internal void Clear()
+		internal void Clear()
 		{
 			ActivateNewLockWorkspace(false);
 		}
@@ -287,6 +288,18 @@ namespace LockAssist
 			PluginDebug.AddInfo("StopGlobalUnlock", 0, lMethods.ToArray());
 			return bStop;
 		}
+
+		internal static void SetContinueUnlock(bool bContinue)
+        {
+			if (m_bContinueUnlock == bContinue) return;
+			m_bContinueUnlock = bContinue;
+			if (m_cbContinueUnlock != null) m_cbContinueUnlock.Checked = bContinue;
+		}
+
+		internal static bool GetContinueUnlock()
+        {
+			return LockAssistConfig.LW_Active && m_bContinueUnlock;
+        }
 	}
 
 

@@ -62,15 +62,18 @@ namespace LockAssist
         {
 			Form f = sender as Form;
 			if (f == null) return;
-			if ((f is KeyPromptForm) && LockWorkspace.ShallStopGlobalUnlock())
+			if (LockAssistConfig.LW_Active)
 			{
-				GlobalWindowManager.RemoveWindow(sender as Form);
-				f.Close();
-				f.Dispose();
-				_lw.OnEnhancedWorkspaceLockUnlock(sender, null);
-				return;
+				if ((f is KeyPromptForm) && LockWorkspace.ShallStopGlobalUnlock())
+				{
+					GlobalWindowManager.RemoveWindow(sender as Form);
+					f.Close();
+					f.Dispose();
+					_lw.OnEnhancedWorkspaceLockUnlock(sender, null);
+					return;
+				}
+				LockWorkspace.OnKeyFormShown(f, e);
 			}
-			LockWorkspace.OnKeyFormShown(f, e);
 			QuickUnlock.OnKeyFormShown(f, false);
         }
 

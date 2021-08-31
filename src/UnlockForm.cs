@@ -29,6 +29,9 @@ namespace LockAssist
 			KeePass.UI.SecureTextBoxEx.InitEx(ref stbPIN);
 			cbTogglePin.Checked = true;
 			stbPIN.EnableProtection(cbTogglePin.Checked);
+
+			cbContinueUnlock.Text = KeePass.Resources.KPRes.LockMenuUnlock;
+			cbContinueUnlock.Visible = cbContinueUnlock.Checked = LockWorkspace.GetContinueUnlock();
 		}
 
 		public ProtectedString QuickUnlockKey
@@ -40,5 +43,10 @@ namespace LockAssist
 		{
 			stbPIN.EnableProtection(cbTogglePin.Checked);
 		}
-	}
+
+        private void cbContinueUnlock_CheckedChanged(object sender, System.EventArgs e)
+        {
+			LockWorkspace.SetContinueUnlock(cbContinueUnlock.Checked);
+		}
+    }
 }

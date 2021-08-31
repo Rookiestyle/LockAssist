@@ -34,6 +34,7 @@ namespace LockAssist
             this.bCancel = new System.Windows.Forms.Button();
             this.cbTogglePin = new System.Windows.Forms.CheckBox();
             this.stbPIN = new KeePass.UI.SecureTextBoxEx();
+            this.cbContinueUnlock = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // lLabel
@@ -92,6 +93,17 @@ namespace LockAssist
             this.stbPIN.Size = new System.Drawing.Size(272, 38);
             this.stbPIN.TabIndex = 0;
             // 
+            // checkBox1
+            // 
+            this.cbContinueUnlock.AutoSize = true;
+            this.cbContinueUnlock.Location = new System.Drawing.Point(81, 132);
+            this.cbContinueUnlock.Name = "checkBox1";
+            this.cbContinueUnlock.Size = new System.Drawing.Size(285, 36);
+            this.cbContinueUnlock.TabIndex = 4;
+            this.cbContinueUnlock.Text = "cbContinueUnlock";
+            this.cbContinueUnlock.UseVisualStyleBackColor = true;
+            this.cbContinueUnlock.CheckedChanged += new System.EventHandler(this.cbContinueUnlock_CheckedChanged);
+            // 
             // UnlockForm
             // 
             this.AcceptButton = this.bUnlock;
@@ -99,6 +111,7 @@ namespace LockAssist
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bCancel;
             this.ClientSize = new System.Drawing.Size(734, 290);
+            this.Controls.Add(this.cbContinueUnlock);
             this.Controls.Add(this.cbTogglePin);
             this.Controls.Add(this.bCancel);
             this.Controls.Add(this.bUnlock);
@@ -123,5 +136,6 @@ namespace LockAssist
 		private System.Windows.Forms.Button bUnlock;
 		private System.Windows.Forms.Button bCancel;
 		private System.Windows.Forms.CheckBox cbTogglePin;
-	}
+        private System.Windows.Forms.CheckBox cbContinueUnlock;
+    }
 }
