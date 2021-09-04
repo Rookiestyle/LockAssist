@@ -46,13 +46,13 @@ namespace LockAssist
 		private void OnFileOpened_QU(object sender, FileOpenedEventArgs e)
 		{
 			var MyOptions = LockAssistConfig.GetQuickUnlockOptions(e.Database);
-			if (LockAssistConfig.FirstTime &&
+			if (LockAssistConfig.QU_FirstTime &&
 				(!MyOptions.QU_UsePassword && (GetQuickUnlockEntry(e.Database) == null)
 				|| (MyOptions.QU_UsePassword && !Program.Config.Security.MasterPassword.RememberWhileOpen)))
 			{
 				Tools.ShowInfo(PluginTranslate.FirstTimeInfo);
 				Tools.ShowOptions();
-				LockAssistConfig.FirstTime = false;
+				LockAssistConfig.QU_FirstTime = false;
 			}
 			if (!MyOptions.QU_Active) return;
 			//Restore previously stored information about the masterkey
@@ -77,12 +77,7 @@ namespace LockAssist
 			}
 			var MyOptions = LockAssistConfig.GetQuickUnlockOptions(e.Database);
 			if (!MyOptions.QU_Active) return;
-			ProtectedString QuickUnlockKey = null;
-			if (Program.Config.Security.MasterPassword.RememberWhileOpen && MyOptions.QU_UsePassword)
-				QuickUnlockKey = GetQuickUnlockKeyFromMasterKey(e.Database);
-			if (QuickUnlockKey == null)
-				QuickUnlockKey = GetQuickUnlockKeyFromEntry(e.Database);
-			QuickUnlockKey = TrimQuickUnlockKey(QuickUnlockKey, MyOptions);
+			ProtectedString QuickUnlockKey = GetQuickUnlockKey(e.Database);
 			if (QuickUnlockKey == null)
 			{
 				PluginDebug.AddError("Quick Unlock: Can't derive key, Quick Unlock not possible");
@@ -218,6 +213,18 @@ namespace LockAssist
 			return QuickUnlockEntry.Strings.GetSafe(PwDefs.PasswordField);
 		}
 
+		internal ProtectedString GetQuickUnlockKey(PwDatabase db)
+        {
+			var MyOptions = LockAssistConfig.GetQuickUnlockOptions(db);
+			ProtectedString psQuickUnlockKey = null;
+			if (Program.Config.Security.MasterPassword.RememberWhileOpen && MyOptions.QU_UsePassword)
+				psQuickUnlockKey = GetQuickUnlockKeyFromMasterKey(db);
+			if (psQuickUnlockKey == null)
+				psQuickUnlockKey = GetQuickUnlockKeyFromEntry(db);
+			psQuickUnlockKey = TrimQuickUnlockKey(psQuickUnlockKey, MyOptions);
+			return psQuickUnlockKey;
+		}
+
 		public static PwEntry GetQuickUnlockEntry(PwDatabase db)
 		{
 			if ((db == null) || !db.IsOpen) return null;
@@ -231,7 +238,7 @@ namespace LockAssist
 			return entries.GetAt(0);
 		}
 
-		private ProtectedString TrimQuickUnlockKey(ProtectedString QuickUnlockKey, LockAssistConfig lac)
+		internal ProtectedString TrimQuickUnlockKey(ProtectedString QuickUnlockKey, LockAssistConfig lac)
 		{
 			if ((QuickUnlockKey == null) || (QuickUnlockKey.Length <= lac.QU_PINLength)) return QuickUnlockKey;
 			int startIndex = 0;

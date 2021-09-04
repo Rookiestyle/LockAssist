@@ -52,10 +52,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LockAssistConfig.cs" />
+    <Compile Include="Config\LockAssistConfig_QU.cs" />
+    <Compile Include="Config\LockAssistConfig_SL.cs" />
+    <Compile Include="Config\LockAssistConfig_LW.cs" />
+    <Compile Include="Config\LockAssistConfig.cs" />
     <Compile Include="LockWorkspace.cs" />
     <Compile Include="PluginTranslation.cs" />
     <Compile Include="QuickUnlock.cs" />
+    <Compile Include="SoftLock.cs" />
     <Compile Include="UnlockForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -14,12 +14,14 @@ namespace LockAssist
 {
 	public partial class LockAssistExt : Plugin
 	{
+		internal const string c_OptionsMenuItemName = "LockAssistPlugin_Options_MenuItem";
 		private static IPluginHost m_host = null;
 		private ToolStripMenuItem m_menu = null;
 		private static bool Terminated { get { return m_host == null; } }
 
 		private QuickUnlock _qu = null;
 		private LockWorkspace _lw = null;
+		private SoftLock _sl = null;
 
 		//private static LockAssistOptions m_options;
 
@@ -35,6 +37,7 @@ namespace LockAssist
 			m_menu = new ToolStripMenuItem();
 			m_menu.Text = PluginTranslate.PluginName + "...";
 			m_menu.Click += (o, e) => Tools.ShowOptions();
+			m_menu.Name = c_OptionsMenuItemName;
 			var tsbLockWorkspace = (ToolStripButton)Tools.GetField("m_tbLockWorkspace", m_host.MainWindow);
 			if (tsbLockWorkspace != null) m_menu.Image = (Image)tsbLockWorkspace.Image;
 			else m_menu.Image = m_host.MainWindow.ClientIcons.Images[(int)PwIcon.LockOpen];
@@ -47,6 +50,7 @@ namespace LockAssist
 
 			_qu = new QuickUnlock();
 			_lw = new LockWorkspace();
+			_sl = new SoftLock(_qu);
 
 			return true;
 		}
@@ -88,6 +92,8 @@ namespace LockAssist
 			_lw = null;
 			_qu.Clear();
 			_qu = null;
+			_sl.Clear();
+			_sl = null;
 
 			m_host.MainWindow.ToolsMenu.DropDownItems.Remove(m_menu);
 			PluginDebug.SaveOrShow();
@@ -100,6 +106,7 @@ namespace LockAssist
 			PluginDebug.AddInfo("Show options", 0);
 			OptionsForm options = new OptionsForm();
 			options.InitEx(LockAssistConfig.GetQuickUnlockOptions(m_host.Database));
+			_sl.EnsureLockedOptions(e.form);
 			Tools.AddPluginToOptionsForm(this, options);
 		}
 
@@ -111,28 +118,34 @@ namespace LockAssist
 			if (!shown) return;
 			var MyOptions = LockAssistConfig.GetQuickUnlockOptions(m_host.Database);
 			LockAssistConfig NewOptions = options.GetQuickUnlockOptions();
-			bool changedConfig = MyOptions.ConfigChanged(NewOptions, false);
-			bool changedConfigTotal = MyOptions.ConfigChanged(NewOptions, true);
+			bool changedConfig = MyOptions.QU_ConfigChanged(NewOptions, false);
+			bool changedConfigTotal = MyOptions.QU_ConfigChanged(NewOptions, true);
 			PluginDebug.AddInfo("Options form closed", 0, "Config changed: " + changedConfig.ToString(), "Config total changed:" + changedConfigTotal.ToString());
 		
-			bool SwitchToNoDBSpecific = MyOptions.CopyFrom(NewOptions);
+			bool SwitchToNoDBSpecific = MyOptions.QU_CopyFrom(NewOptions);
 
             if (SwitchToNoDBSpecific)
 			{
 				string sQuestion = string.Format(PluginTranslate.OptionsSwitchDBToGeneral, DialogResult.Yes.ToString(), DialogResult.No.ToString());
 				if (Tools.AskYesNo(sQuestion) == DialogResult.No)
 					//Make current configuration the new global configuration
-					MyOptions.WriteConfig(null);
+					MyOptions.QU_WriteConfig(null);
 				//Remove DB specific configuration
-				MyOptions.DeleteDBConfig(m_host.Database);
+				MyOptions.QU_DeleteDBConfig(m_host.Database);
 			}
-			else MyOptions.WriteConfig(m_host.Database);
+			else MyOptions.QU_WriteConfig(m_host.Database);
 
 			if (LockAssistConfig.LW_Active != options.GetLockWorkspace())
 			{
 				LockAssistConfig.LW_Active = !LockAssistConfig.LW_Active;
 				_lw.ActivateNewLockWorkspace(LockAssistConfig.LW_Active);
 			}
+
+			var slsResult = options.GetSoftLockOptions();
+			LockAssistConfig.SL_Active = slsResult.Active;
+			LockAssistConfig.SL_Seconds = slsResult.Seconds;
+			LockAssistConfig.SL_OnMinimize = slsResult.SoftLockOnMinimize;
+			_sl.CheckSoftlockMode();
 		}
 #endregion
 

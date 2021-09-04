@@ -6,6 +6,7 @@
 
 LockAssist extends KeePass' lock/unlock mechanism in multiple ways:  
 - Quick Unlock
+- Soft Lock (privacy mode)
 - (Un)lock workspace can handle ALL databases or only the selected one
 
 # Table of Contents
@@ -27,6 +28,18 @@ You can unlock your database with a only a few characters instead - your quick u
 Have a look at the [Wiki](https://github.com/rookiestyle/lockassist/wiki/quick-unlock) to learn why this does not impose security risks.
 
 <img src="images/LockAssist%20-%20quick%20unlock.png" alt="Options" height="50%" width="50%"/>  
+
+## SoftLock
+SoftLock hides sensitive information while still allowing Auto-Type as well as other integration.  
+You can configure SoftLock to kick in after a certain inactivity or when minimizing KeePass.  
+
+When active, the following is hidden:
+- group list  
+- entry list  
+- entry view  
+- all forms containing sensitive data (entry form, ...)
+
+<img src="images/LockAssist%20-%20softlock.png" alt="Options" height="50%" width="50%"/>  
 
 ## Lock workspace
 By default, 'Lock workspace' will lock all loaded databases whereas 'Unlock workspace' will only unlock the currently selected database.  

@@ -72,13 +72,25 @@ Please don't forget to activate this setting";
 The database stays locked and can only be unlocked with the original masterkey";
 		public static readonly string Hours = @"Hours";
 		public static readonly string Minutes = @"Minutes";
+		public static readonly string Seconds = @"Seconds";
 		public static readonly string OptionsLockWorkspace = @"Global '{0} / {1}'";
-		public static readonly string OptionsLockWorkspaceDesc = @"This option changes the behaviour of '{0}' for both the menu entry as well as the toolbar button.
+		public static readonly string OptionsLockWorkspaceDesc = @"This option changes the behaviour of '{0} / {1}' for both the menu entry as well as the toolbar button.
 
 If it's active ALL loaded databases are locked / unlocked by using these commands.
 In this case it depends on the active document's state whether a global lock or global unlock is performed.
 
 If the [Shift] key is pressed while using these commands only the active document is processed.";
+		public static string SoftlockModeUnhideForms = @"SoftLock active. Click topmost form to deactivate";
+		public static readonly string SoftlockModeUnhide = @"SoftLock active. Click to deactivate";
+		public static readonly string SoftlockActive = @"SoftLock after inactivity";
+		public static readonly string SoftlockOnMinimize = @"SoftLock when minimizing KeePass";
+		public static readonly string SoftlockDesc = @"SoftLock hides following sensitive information while still allowing Auto-Type as well as other integration:
+- group list
+- entry list
+- entry view
+- all forms NOT mentioned in config file property LockAssist.SoftlockExcludeForms
+
+Valid Quick Unlock settings are required, Quick Unlock itself does NOT need to be active";
 		#endregion
 
 		#region NO changes in this area

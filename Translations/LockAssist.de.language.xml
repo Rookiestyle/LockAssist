@@ -4,7 +4,7 @@
     Increment the TranslationVersion every time the translation file is updated
 	Also update the version.info file
   -->
-  <TranslationVersion>3</TranslationVersion>
+  <TranslationVersion>4</TranslationVersion>
   <item>
     <key>FirstTimeInfo</key>
     <value>Quick Unlock bietet verschiedene Konfigurationsmöglichkeiten.
@@ -104,29 +104,52 @@ Bitte aktiviere diese Einstellung!</value>
 Die Datenbank ist weiterhin gesperrt und kann nur mit dem vollständigen Hauptschlüssel entsperrt werden.</value>
   </item>
   <item>
-    <key>FirstTimeInfoRememberPassword</key>
-    <value>Quick Unlock bietet verschiedene Konfigurationsmöglichkeiten.
-Bitte wähle eine der Möglichkeiten aus.</value>
+    <key>Hours</key>
+    <value>Stunden</value>
   </item>
   <item>
-	<key>Hours</key>
-	<value>Stunden</value>
+    <key>Minutes</key>
+    <value>Minuten</value>
   </item>
   <item>
-	<key>Minutes</key>
-	<value>Minuten</value>
+    <key>Seconds</key>
+    <value>Sekunden</value>
   </item>
   <item>
-	<key>OptionsLockWorkspace</key>
-	<value>Global '{0} / {1}'</value>
+    <key>OptionsLockWorkspace</key>
+    <value>Global '{0} / {1}'</value>
   </item>
   <item>
-	<key>OptionsLockWorkspaceDesc</key>
-	<value>Diese Option ändert das Verhalten des Buttons und des Menüeintrags '{0} / {1}'.
+    <key>OptionsLockWorkspaceDesc</key>
+    <value>Diese Option ändert das Verhalten des Buttons und des Menüeintrags '{0} / {1}'.
 	
 Ist sie aktiv, dann werden beim Nutzen dieser Kommandos ALLE Datenbanken gesperrt bzw. entsperrt.
 Es hängt vom Sperrstatus der aktiven Datenbank ab, ob gesperrt oder entsperrt wird.
 
 Halte die [Shift]-Taste gedrückt, um nur die aktive Datenbank zu sperren / entsperren.</value>
+  </item>
+  <item>
+    <key>SoftlockModeUnhide</key>
+    <value>SoftLock ist aktiv.
+
+Zum Deaktivieren bitte klicken</value>
+  </item>
+  <item>
+    <key>SoftlockActive</key>
+    <value>SoftLock nach Inaktivität</value>
+  </item>
+  <item>
+    <key>SoftlockOnMinimize</key>
+    <value>SoftLock beim Minimieren von Keepass</value>
+  </item>
+  <item>
+    <key>SoftlockDesc</key>
+    <value>SoftLock ermöglicht das Nutzen von Auto-Type und andere Integrationsmöglichkeiten, während folgende Daten verborgen werden:
+- Gruppenansicht
+- Liste der vorhandenen Einträge
+- Eintragsansicht
+- Alle Formulare, die NICHT in der Konfigurationsdatei unter LockAssist.SoftlockExcludeForms aufgeführt sind
+
+SoftLock setzt gültige Quick Unlock Einstellung voraus, Quick Unlock selbst muss NICHT aktiv sein.</value>
   </item>
 </Translation>

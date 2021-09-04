@@ -20,7 +20,7 @@ Please choose your preferred way of working.</value>
   </item>
   <item>
     <key>KeyProvNoQuickUnlock</key>
-    <value>No Quick Unlock key found. 
+    <value>No Quick Unlock key found.
 
 Quick Unlock is not possible.</value>
   </item>
@@ -46,7 +46,7 @@ An existing Quick Unlock entry will be used as fallback</value>
   </item>
   <item>
     <key>OptionsQUEntryCreated</key>
-    <value>Quick Unlock entry created. 
+    <value>Quick Unlock entry created.
 
 Please edit and set Quick Unlock PIN as password</value>
   </item>
@@ -103,24 +103,50 @@ Please don't forget to activate this setting.</value>
 The database stays locked and can only be unlocked with the original masterkey</value>
   </item>
   <item>
-	<key>Hours</key>
-	<value>Hours</value>
+    <key>Hours</key>
+    <value>Hours</value>
   </item>
   <item>
-	<key>Minutes</key>
-	<value>Minutes</value>
+    <key>Minutes</key>
+    <value>Minutes</value>
   </item>
   <item>
-	<key>OptionsLockWorkspace</key>
-	<value>Global '{0} / {1}'</value>
+    <key>Seconds</key>
+    <value>Seconds</value>
   </item>
   <item>
-	<key>OptionsLockWorkspaceDesc</key>
-	<value>This option changes the behaviour of '{0} / {1}' for both the menu entry as well as the toolbar button.
+    <key>OptionsLockWorkspace</key>
+    <value>Global '{0} / {1}'</value>
+  </item>
+  <item>
+    <key>OptionsLockWorkspaceDesc</key>
+    <value>This option changes the behaviour of '{0} / {1}' for both the menu entry as well as the toolbar button.
 
 If it's active ALL loaded databases are locked / unlocked by using these commands.
 In this case it depends on the active document's state whether a global lock or global unlock is performed.
 
 If the [Shift] key is pressed while using these commands only the active document is processed.</value>
+  </item>
+  <item>
+    <key>SoftlockModeUnhide</key>
+    <value>SoftLock active. Click to deactivate</value>
+  </item>
+  <item>
+    <key>SoftlockActive</key>
+    <value>SoftLock after inactivity</value>
+  </item>
+  <item>
+    <key>SoftlockOnMinimize</key>
+    <value>SoftLock when minimizing KeePass</value>
+  </item>
+  <item>
+    <key>SoftlockDesc</key>
+    <value>SoftLock hides following sensitive information while still allowing Auto-Type as well as other integration:
+- group list
+- entry list
+- entry view
+- all forms NOT mentioned in config file property LockAssist.SoftlockExcludeForms
+
+Valid Quick Unlock settings are required, Quick Unlock itself does NOT need to be active</value>
   </item>
 </Translation>

@@ -39,12 +39,23 @@ namespace LockAssist
 			tabLockWorkspace.Text = KPRes.LockWorkspace;
 			cbLockWorkspace.Text = string.Format(PluginTranslate.OptionsLockWorkspace, KPRes.LockWorkspace, KPRes.LockMenuUnlock);
 			tbLockWorkspace.Lines = string.Format(PluginTranslate.OptionsLockWorkspaceDesc, KPRes.LockWorkspace, KPRes.LockMenuUnlock).Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+			tabSoftLock.Text = "SoftLock";
+			cbSLActive.Text = PluginTranslate.SoftlockActive;
+			cbSLOnMinimize.Text = PluginTranslate.SoftlockOnMinimize;
+			tbSoftLockDesc.Lines = PluginTranslate.SoftlockDesc.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None); ;
+
+			cbSLInterval.Items.Add(PluginTranslate.Seconds);
+			cbSLInterval.Items.Add(PluginTranslate.Minutes);
+			cbSLInterval.SelectedIndex = 0;
+
 		}
 
 		internal void InitEx(LockAssistConfig options)
 		{
 			Init_QuickUnlock(options);
 			Init_LockWorkspace();
+			Init_SoftLock();
 		}
 
         private void Init_QuickUnlock(LockAssistConfig options)
@@ -55,7 +66,7 @@ namespace LockAssist
 			rbPINEnd.Checked = options.QU_UsePasswordFromEnd;
 			rbPINFront.Checked = !options.QU_UsePasswordFromEnd;
 			cbPINDBSpecific.Checked = options.QU_DBSpecific;
-			FirstTime = LockAssistConfig.FirstTime;
+			FirstTime = LockAssistConfig.QU_FirstTime;
 			cbQUValidityActive.Checked = options.QU_ValiditySeconds > 0;
 			decimal minutes = options.QU_ValiditySeconds / 60;
 			if (minutes < 60)
@@ -74,6 +85,22 @@ namespace LockAssist
         {
 			cbLockWorkspace.Checked = LockAssistConfig.LW_Active;
 		}
+
+		private void Init_SoftLock()
+        {
+			cbSLActive.Checked = LockAssistConfig.SL_IsActive;
+			if (LockAssistConfig.SL_Seconds < 60)
+			{
+				cbSLInterval.SelectedIndex = 0;
+				nSLSeconds.Value = LockAssistConfig.SL_Seconds;
+			}
+			else
+			{
+				cbSLInterval.SelectedIndex = 1;
+				nSLSeconds.Value = LockAssistConfig.SL_Seconds / 60;
+			}
+			cbSLOnMinimize.Checked = LockAssistConfig.SL_OnMinimize;
+        }
 
         internal LockAssistConfig GetQuickUnlockOptions()
 		{
@@ -97,6 +124,16 @@ namespace LockAssist
         {
 			return cbLockWorkspace.Checked;
         }
+
+		internal SoftLockSettings GetSoftLockOptions()
+        {
+			SoftLockSettings slsResult = new SoftLockSettings();
+			slsResult.Active = cbSLActive.Checked;
+			slsResult.Seconds = (int)nSLSeconds.Value;
+			if (cbSLInterval.SelectedIndex == 1) slsResult.Seconds *= 60;
+			slsResult.SoftLockOnMinimize = cbSLOnMinimize.Checked;
+			return slsResult;
+		}
 
 		private void tbPINLength_TextChanged(object sender, EventArgs e)
 		{
