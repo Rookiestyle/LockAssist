@@ -41,7 +41,7 @@ namespace LockAssist
 		public DateTime dtEnd
         {
 			get { return dtStart == DateTime.MinValue ? DateTime.MaxValue : dtStart + tsValidity; }
-	}
+		}
 	}
 
 	public class QuickUnlockKeyProv : KeyProvider
@@ -109,7 +109,8 @@ namespace LockAssist
 				//This is required so that next time it's locked, we can deduce the Quick Unlock key from the password
 				if (db != null) p = DeserializePassword(quOldKey.pwHash, KeePass.Program.Config.Security.MasterPassword.RememberWhileOpen);
 
-				if ((p == null || p.Password == null) && quOldKey.HasPassword) p = new KcpPassword(new byte[0] { }, KeePass.Program.Config.Security.MasterPassword.RememberWhileOpen);
+				//Check for KeyData AND Password
+				if ((p == null || (p.KeyData == null && p.Password == null)) && quOldKey.HasPassword) p = new KcpPassword(new byte[0] { }, KeePass.Program.Config.Security.MasterPassword.RememberWhileOpen);
 				ck.AddUserKey(p);
 			}
 			if (!string.IsNullOrEmpty(quOldKey.keyFile)) ck.AddUserKey(new KcpKeyFile(quOldKey.keyFile));
@@ -152,10 +153,21 @@ namespace LockAssist
 			ExpireOutdatedKeys();
 			QuickUnlockOldKeyInfo quOldKey = null;
 			if (!m_originalKey.TryGetValue(db.IOConnectionInfo.Path, out quOldKey)) return null;
+			m_originalKey.Remove(db.IOConnectionInfo.Path);
+
+			//Only return old key if Db was unlocked using LockAssist
+			//
+			// CustomKey is used
+			// Only CustomKey is used
+			// CustomKey name is "our" name
+			KcpCustomKey kcpCustom = db.MasterKey.GetUserKey(typeof(KcpCustomKey)) as KcpCustomKey;
+			if (kcpCustom == null) return null;
+			if (db.MasterKey.UserKeyCount != 1) return null;
+			if (kcpCustom.Name != KeyProviderName) return null;
+
 			if ((quOldKey.pwHash != null) && (quOldKey.pwHash.Length != 0))
 				quOldKey.pwHash = DecryptKey(quOldKey.QuickUnlockKey, quOldKey.pwHash);
-			m_originalKey.Remove(db.IOConnectionInfo.Path);
-				return quOldKey;
+			return quOldKey;
 		}
 
 		internal static void AddDb(PwDatabase db, ProtectedString QuickUnlockKey, bool savePw)
