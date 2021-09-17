@@ -15,10 +15,15 @@ namespace LockAssist
 	{
 		private bool FirstTime = false;
 
+		private static System.Reflection.MethodInfo m_miEditSelectedEntry = null;
+
 		public OptionsForm()
 		{
 			InitializeComponent();
 
+			if (m_miEditSelectedEntry == null)
+				m_miEditSelectedEntry = Program.MainForm.GetType().GetMethod("EditSelectedEntry", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			
 			Text = PluginTranslate.PluginName;
 
 			cbActive.Text = PluginTranslate.Active;
@@ -162,7 +167,7 @@ namespace LockAssist
 					Program.MainForm.ActiveDatabase.RootGroup.AddEntry(check, true);
 					check.Strings.Set(PwDefs.TitleField, new KeePassLib.Security.ProtectedString(false, QuickUnlockKeyProv.KeyProviderName));
 					Tools.ShowInfo(PluginTranslate.OptionsQUEntryCreated);
-					ShowQuickUnlockEntry(Program.MainForm.ActiveDatabase, check.Uuid);
+					ShowQuickUnlockEntry(Program.MainForm.ActiveDatabase, check);
 				}
 				return;
 			}
@@ -187,24 +192,15 @@ namespace LockAssist
 			if ((sender as TextBox).Text != len.ToString()) (sender as TextBox).Text = len.ToString();
 		}
 
-		private void ShowQuickUnlockEntry(PwDatabase db, PwUuid qu)
+		private void ShowQuickUnlockEntry(PwDatabase db, PwEntry pe)
 		{
-			Program.MainForm.UpdateUI(false, null, false, db.RootGroup, true, db.RootGroup, true);
-			Program.MainForm.EnsureVisibleEntry(qu);
+			Program.MainForm.UpdateUI(true, null, true, db.RootGroup, true, db.RootGroup, true);
+			Program.MainForm.SelectEntries(new KeePassLib.Collections.PwObjectList<PwEntry>() { pe }, true, true);
 
-			ListView lv = (Program.MainForm.Controls.Find("m_lvEntries", true)[0] as ListView);
-			foreach (ListViewItem lvi in lv.Items)
-			{
-				PwListItem li = (lvi.Tag as PwListItem);
-				if (li == null) continue;
+			if (m_miEditSelectedEntry == null) return;
 
-				PwEntry pe = li.Entry;
-				if (pe.Uuid != qu) continue;
-				lv.FocusedItem = lvi;
-				ToolStripItem[] tsmi = Program.MainForm.EntryContextMenu.Items.Find("m_ctxEntryEdit", false);
-				if (tsmi != null) tsmi[0].PerformClick();
-				break;
-			}
+			if (Tools.KeePassVersion < new Version(2, 49)) m_miEditSelectedEntry.Invoke(Program.MainForm, new object[] { false });
+			else m_miEditSelectedEntry.Invoke(Program.MainForm, new object[] { 0 });
 		}
 
 		private void UnlockOptions_Load(object sender, EventArgs e)
