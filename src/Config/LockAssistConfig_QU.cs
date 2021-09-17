@@ -31,7 +31,7 @@ namespace LockAssist
 				QU_Active = db.CustomData.Get(LockAssistActive) == "true";
 				QU_UsePassword = db.CustomData.Get(LockAssistUsePassword) == "true";
 				if (!int.TryParse(db.CustomData.Get(LockAssistKeyLength), out QU_PINLength)) QU_PINLength = 4;
-				QU_UsePasswordFromEnd = db.CustomData.Get(LockAssistKeyFromEnd) == "false";
+				QU_UsePasswordFromEnd = db.CustomData.Get(LockAssistKeyFromEnd) == "true";
 				if (!int.TryParse(db.CustomData.Get(LockAssistQU_ValiditySeconds), out QU_ValiditySeconds)) QU_ValiditySeconds = 0;
 			}
 			else
