@@ -101,29 +101,54 @@ namespace LockAssist
 
 		private static void RestoreOldMasterKeyInternal(PwDatabase db, IOConnectionInfo ioConnection, QuickUnlockOldKeyInfo quOldKey)
         {
+			List<string> lMsg = new List<string>();
 			CompositeKey ck = new CompositeKey();
+			bool bRestoreSuccess = true;
 			if (quOldKey.pwHash != null)
 			{
 				KcpPassword p = null;
 				//Only restore password if the db was actually unlocked using Quick Unlock
 				//This is required so that next time it's locked, we can deduce the Quick Unlock key from the password
-				if (db != null) p = DeserializePassword(quOldKey.pwHash, KeePass.Program.Config.Security.MasterPassword.RememberWhileOpen);
+				if (db != null)
+				{
+					p = DeserializePassword(quOldKey.pwHash, KeePass.Program.Config.Security.MasterPassword.RememberWhileOpen);
+				}
 
 				//Check for KeyData AND Password
-				if ((p == null || (p.KeyData == null && p.Password == null)) && quOldKey.HasPassword) p = new KcpPassword(new byte[0] { }, KeePass.Program.Config.Security.MasterPassword.RememberWhileOpen);
+				if ((p == null || (p.KeyData == null && p.Password == null)) && quOldKey.HasPassword)
+				{
+					p = new KcpPassword(new byte[0] { }, KeePass.Program.Config.Security.MasterPassword.RememberWhileOpen);
+					bRestoreSuccess = false;
+				}
 				ck.AddUserKey(p);
+				lMsg.Add("Add password to masterkey: " + (bRestoreSuccess ? "Password decrypted and restored" : "Password restore failed, empty password set"));
 			}
-			if (!string.IsNullOrEmpty(quOldKey.keyFile)) ck.AddUserKey(new KcpKeyFile(quOldKey.keyFile));
+			if (!string.IsNullOrEmpty(quOldKey.keyFile))
+			{
+				ck.AddUserKey(new KcpKeyFile(quOldKey.keyFile));
+				lMsg.Add("Add key file to masterkey");
+			}
 			if (!string.IsNullOrEmpty(quOldKey.CustomKeyProviderName))
 			{
 				var ckHashedData = quOldKey.CustomKeyProviderData.ReadData();
 				ck.AddUserKey(new KcpCustomKey(quOldKey.CustomKeyProviderName, ckHashedData, false));
 				MemUtil.ZeroByteArray(ckHashedData);
+				lMsg.Add("Add custom key provider to masterkey: " + quOldKey.CustomKeyProviderName);
 			}
-			if (quOldKey.account) ck.AddUserKey(new KcpUserAccount());
-
-			if (db != null) db.MasterKey = ck;
+			if (quOldKey.account)
+			{
+				ck.AddUserKey(new KcpUserAccount());
+				lMsg.Add("Add user account to masterkey");
+			}
+			if (db != null)
+			{
+				db.MasterKey = ck;
+				lMsg.Add("Set masterkey for database");
+			}
 			KeePass.Program.Config.Defaults.SetKeySources(ioConnection, ck);
+			lMsg.Add("Set database key sources");
+			if (bRestoreSuccess) PluginDebug.AddSuccess("Restore old masterkey", 0, lMsg.ToArray());
+			else PluginDebug.AddError("Restore old masterkey", 0, lMsg.ToArray());
 		}
 
 		internal static void RestoreOldMasterKey(PwDatabase db, QuickUnlockOldKeyInfo quOldKey)
