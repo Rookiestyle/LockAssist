@@ -4,7 +4,7 @@
     Increment the TranslationVersion every time the translation file is updated
 	Also update the version.info file
   -->
-  <TranslationVersion>1</TranslationVersion>
+  <TranslationVersion>2</TranslationVersion>
   <item>
     <key>FirstTimeInfo</key>
     <value>Desloqueio Rápido (Quick Unlock) oferece dois modos de operação.
@@ -122,5 +122,27 @@ Se estiver ativo, TODOS os bancos de dados carregados serão bloqueados / desblo
 Nesse caso, depende do estado do documento ativo se é realizado um bloqueio global ou desbloqueio global.
 
 Se a tecla [SHIFT] for pressionada ao usar esses comandos, somente o documento ativo será processado.</value>
+  </item>
+  <item>
+    <key>SoftlockModeUnhide</key>
+    <value>SoftLock ativo. Clique para desativar</value>
+  </item>
+  <item>
+    <key>SoftlockActive</key>
+    <value>SoftLock depois da inatividade</value>
+  </item>
+  <item>
+    <key>SoftlockOnMinimize</key>
+    <value>SoftLock quando minimizando KeePass</value>
+  </item>
+  <item>
+    <key>SoftlockDesc</key>
+    <value>SoftLock oculta as seguintes informações sensitivas enquanto ainda permite Auto-Type, bem como outra integração:
+- lista de grupos
+- lista de entradas
+- exibir entrada
+- todas as formas NÃO mencionadas na propriedade do arquivo de configuração LockAssist.SoftlockExcludeForms
+
+Configurações válidas do Desbloqueio Rápido são requeridas, Desbloqueio Rápido em si NÃO é necessario estar ativo</value>
   </item>
 </Translation>
