@@ -126,14 +126,14 @@ namespace LockAssist
 
             if (SwitchToNoDBSpecific)
 			{
-				string sQuestion = string.Format(PluginTranslate.OptionsSwitchDBToGeneral, DialogResult.Yes.ToString(), DialogResult.No.ToString());
+				string sQuestion = string.Format(PluginTranslate.OptionsSwitchDBToGeneral, KeePass.Resources.KPRes.Yes, KeePass.Resources.KPRes.No);
 				if (Tools.AskYesNo(sQuestion) == DialogResult.No)
 					//Make current configuration the new global configuration
-					MyOptions.QU_WriteConfig(null);
+					MyOptions.QU_WriteConfig(null, false);
 				//Remove DB specific configuration
 				MyOptions.QU_DeleteDBConfig(m_host.Database);
 			}
-			else MyOptions.QU_WriteConfig(m_host.Database);
+			else MyOptions.QU_WriteConfig(m_host.Database, changedConfigTotal);
 
 			if (LockAssistConfig.LW_Active != options.GetLockWorkspace())
 			{

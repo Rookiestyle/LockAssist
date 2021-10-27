@@ -73,13 +73,7 @@ namespace LockAssist
 			return SwitchToNoDBSpecific;
 		}
 
-		public void QU_WriteConfig()
-		{
-			QU_DBSpecific = false;
-			QU_WriteConfig(null);
-		}
-
-		public void QU_WriteConfig(PwDatabase db)
+		public void QU_WriteConfig(PwDatabase db, bool bChanged)
 		{
 			if (QU_DBSpecific)
 			{
@@ -90,7 +84,7 @@ namespace LockAssist
 				db.CustomData.Set(LockAssistKeyFromEnd, QU_UsePasswordFromEnd ? "true" : "false");
 				db.CustomData.Set(LockAssistQuickUnlockDBSpecific, "true");
 				db.CustomData.Set(LockAssistQU_ValiditySeconds, QU_ValiditySeconds.ToString());
-				QU_FlagDBChanged(db);
+				if (bChanged) QU_FlagDBChanged(db);
 			}
 			else
 			{

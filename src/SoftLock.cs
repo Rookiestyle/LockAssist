@@ -172,6 +172,7 @@ namespace LockAssist
         {
 			List<string> lMsg = new List<string>();
 			m_SoftLocked = !bVisible;
+			lMsg.Add("SoftLock active: " + m_SoftLocked.ToString());
 			if (m_SoftLocked)
 			{
 				m_dHiddenForms.Clear();
@@ -215,13 +216,13 @@ namespace LockAssist
 					if (!kvp.Key.RightToLeftLayout)
 						kvp.Key.Opacity = !m_SoftLocked ? kvp.Value.Opacity : .1; //0 makes the window not react on mouse input
 				}
-				catch (Exception) { }
+				catch (Exception ex) { lMsg.Add("Ex:" + ex.Message); }
 			}
 			if (!m_SoftLocked) m_dHiddenForms.Clear();
 			PluginDebug.AddInfo("Toggle SoftLock", lMsg.ToArray());
 		}
 
-        private void HandleMenu(bool bVisible)
+		private void HandleMenu(bool bVisible)
         {
 			HandleMenuEntry(LockAssistExt.c_OptionsMenuItemName, bVisible);
 			HandleMenuEntry("m_menuGroup", bVisible);
@@ -270,8 +271,8 @@ namespace LockAssist
 			tsmi[0].Enabled = bEnabled;
 		}
 
-        private void HandlePanel(bool bVisible, Control c)
-        {
+		private void HandlePanel(bool bVisible, Control c)
+		{
 			string buttonName = "LockAssistPlugin_SoftLock_HideButton" + c.GetType().Name + c.Name;
 			Button bHide = Tools.GetControl(buttonName, c) as Button;
 			if (bHide != null)
@@ -287,9 +288,9 @@ namespace LockAssist
 			bHide.Name = buttonName;
 			if (m_dHiddenForms.Count == 0)
 				bHide.Text = PluginTranslate.SoftlockModeUnhide; //Display button on MainForm only, set text
-			else if (Application.OpenForms.Count > 1 && c == Application.OpenForms[Application.OpenForms.Count-1]) //Display button on topmost form, set text
+			else if (Application.OpenForms.Count > 1 && c == Application.OpenForms[Application.OpenForms.Count - 1]) //Display button on topmost form, set text
 				bHide.Text = PluginTranslate.SoftlockModeUnhideForms;
-				
+
 			bHide.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			bHide.Dock = DockStyle.Fill;
 			bHide.Click += OnTimerTick;
@@ -297,7 +298,7 @@ namespace LockAssist
 			
 			c.Controls.Add(bHide);
 			bHide.BringToFront();
-			bHide.Focus();
+			bHide.Select();
 		}
 		private void OnUIStateUpdated(object sender, EventArgs e)
         {
