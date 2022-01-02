@@ -4,7 +4,7 @@
     Increment the TranslationVersion every time the translation file is updated
 	Also update the version.info file
   -->
-  <TranslationVersion>4</TranslationVersion>
+  <TranslationVersion>5</TranslationVersion>
   <item>
     <key>FirstTimeInfo</key>
     <value>Quick Unlock bietet verschiedene Konfigurationsmöglichkeiten.
@@ -127,6 +127,12 @@ Ist sie aktiv, dann werden beim Nutzen dieser Kommandos ALLE Datenbanken gesperr
 Es hängt vom Sperrstatus der aktiven Datenbank ab, ob gesperrt oder entsperrt wird.
 
 Halte die [Shift]-Taste gedrückt, um nur die aktive Datenbank zu sperren / entsperren.</value>
+  </item>
+  <item>
+    <key>SoftlockModeUnhideForms</key>
+    <value>SoftLock ist aktiv.
+
+Zum Deaktivieren bitte auf das oberste Fenster klicken</value>
   </item>
   <item>
     <key>SoftlockModeUnhide</key>

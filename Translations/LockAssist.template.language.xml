@@ -86,7 +86,7 @@ Create it now?</value>
   <item>
     <key>OptionsQUInfoRememberPassword</key>
     <value>'Remember master password' needs to be active in Options -&gt; Security.
-Please don't forget to activate this setting.</value>
+Please don't forget to activate this setting</value>
   </item>
   <item>
     <key>OptionsQUUseLast</key>
@@ -126,6 +126,10 @@ If it's active ALL loaded databases are locked / unlocked by using these command
 In this case it depends on the active document's state whether a global lock or global unlock is performed.
 
 If the [Shift] key is pressed while using these commands only the active document is processed.</value>
+  </item>
+  <item>
+    <key>SoftlockModeUnhideForms</key>
+    <value>SoftLock active. Click topmost form to deactivate</value>
   </item>
   <item>
     <key>SoftlockModeUnhide</key>

@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace PluginTranslation
 {
-	public class TranslationChangedEventArgs: EventArgs
+	public class TranslationChangedEventArgs : EventArgs
 	{
 		public string OldLanguageIso6391 = string.Empty;
 		public string NewLanguageIso6391 = string.Empty;
@@ -33,57 +33,175 @@ namespace PluginTranslation
 		private static string LanguageIso6391 = string.Empty;
 		#region Definitions of translated texts go here
 		public const string PluginName = "Lock Assist";
+		/// <summary>
+		/// Quick Unlock offers two operation modes.
+		/// Please choose your preferred way of working.
+		/// </summary>
 		public static readonly string FirstTimeInfo = @"Quick Unlock offers two operation modes.
 Please choose your preferred way of working.";
+		/// <summary>
+		/// Mode:
+		/// </summary>
 		public static readonly string OptionsQUMode = @"Mode:";
+		/// <summary>
+		/// Quick Unlock active
+		/// </summary>
 		public static readonly string Active = @"Quick Unlock active";
+		/// <summary>
+		/// No Quick Unlock key found.
+		/// 
+		/// Quick Unlock is not possible.
+		/// </summary>
 		public static readonly string KeyProvNoQuickUnlock = @"No Quick Unlock key found.
 
 Quick Unlock is not possible.";
+		/// <summary>
+		/// Prerequsites for mode 'database password':
+		/// - Database masterkey contains a password
+		/// - Option 'Remember master password' is active
+		/// 
+		/// An existing Quick Unlock entry will be used as fallback
+		/// </summary>
 		public static readonly string OptionsQUReqInfoDB = @"Prerequsites for mode 'database password':
 - Database masterkey contains a password
 - Option 'Remember master password' is active
 
 An existing Quick Unlock entry will be used as fallback";
+		/// <summary>
+		/// Quick Unlock
+		/// </summary>
 		public static readonly string OptionsQUSettings = @"Quick Unlock";
+		/// <summary>
+		/// Quick Unlock entry only
+		/// </summary>
 		public static readonly string OptionsQUModeEntry = @"Quick Unlock entry only";
+		/// <summary>
+		/// Database password
+		/// </summary>
 		public static readonly string OptionsQUModeDatabasePW = @"Database password";
+		/// <summary>
+		/// Quick Unlock entry created.
+		/// 
+		/// Please edit and set Quick Unlock PIN as password
+		/// </summary>
 		public static readonly string OptionsQUEntryCreated = @"Quick Unlock entry created.
 
 Please edit and set Quick Unlock PIN as password";
+		/// <summary>
+		/// Settings are DB specific
+		/// </summary>
 		public static readonly string OptionsQUSettingsPerDB = @"Settings are DB specific";
+		/// <summary>
+		/// Database specific settings switched off.
+		/// 
+		/// Click '{0}' to use the global settings for this database.
+		/// Click '{1}' to make this database's settings the new global settings.
+		/// </summary>
 		public static readonly string OptionsSwitchDBToGeneral = @"Database specific settings switched off.
 
 Click '{0}' to use the global settings for this database.
 Click '{1}' to make this database's settings the new global settings.";
+		/// <summary>
+		/// PIN length:
+		/// </summary>
 		public static readonly string OptionsQUPINLength = @"PIN length:";
+		/// <summary>
+		/// Unlock
+		/// </summary>
 		public static readonly string ButtonUnlock = @"Unlock";
+		/// <summary>
+		/// Quick Unlock PIN:
+		/// </summary>
 		public static readonly string UnlockLabel = @"Quick Unlock PIN:";
+		/// <summary>
+		/// Quick Unlock entry could not be found.
+		/// 
+		/// Create it now?
+		/// </summary>
 		public static readonly string OptionsQUEntryCreate = @"Quick Unlock entry could not be found.
 
 Create it now?";
+		/// <summary>
+		/// This key provider cannot be used to create keys.
+		/// </summary>
 		public static readonly string KeyProvNoCreate = @"This key provider cannot be used to create keys.";
+		/// <summary>
+		/// 'Remember master password' needs to be active in Options -> Security.
+		/// Please don't forget to activate this setting
+		/// </summary>
 		public static readonly string OptionsQUInfoRememberPassword = @"'Remember master password' needs to be active in Options -> Security.
 Please don't forget to activate this setting";
+		/// <summary>
+		/// Use last {0} characters as PIN
+		/// </summary>
 		public static readonly string OptionsQUUseLast = @"Use last {0} characters as PIN";
+		/// <summary>
+		/// Use first {0} characters as PIN
+		/// </summary>
 		public static readonly string OptionsQUUseFirst = @"Use first {0} characters as PIN";
+		/// <summary>
+		/// The entered PIN was not correct.
+		/// 
+		/// The database stays locked and can only be unlocked with the original masterkey
+		/// </summary>
 		public static readonly string WrongPIN = @"The entered PIN was not correct.
 
 The database stays locked and can only be unlocked with the original masterkey";
+		/// <summary>
+		/// Hours
+		/// </summary>
 		public static readonly string Hours = @"Hours";
+		/// <summary>
+		/// Minutes
+		/// </summary>
 		public static readonly string Minutes = @"Minutes";
+		/// <summary>
+		/// Seconds
+		/// </summary>
 		public static readonly string Seconds = @"Seconds";
+		/// <summary>
+		/// Global '{0} / {1}'
+		/// </summary>
 		public static readonly string OptionsLockWorkspace = @"Global '{0} / {1}'";
+		/// <summary>
+		/// This option changes the behaviour of '{0} / {1}' for both the menu entry as well as the toolbar button.
+		/// 
+		/// If it's active ALL loaded databases are locked / unlocked by using these commands.
+		/// In this case it depends on the active document's state whether a global lock or global unlock is performed.
+		/// 
+		/// If the [Shift] key is pressed while using these commands only the active document is processed.
+		/// </summary>
 		public static readonly string OptionsLockWorkspaceDesc = @"This option changes the behaviour of '{0} / {1}' for both the menu entry as well as the toolbar button.
 
 If it's active ALL loaded databases are locked / unlocked by using these commands.
 In this case it depends on the active document's state whether a global lock or global unlock is performed.
 
 If the [Shift] key is pressed while using these commands only the active document is processed.";
-		public static string SoftlockModeUnhideForms = @"SoftLock active. Click topmost form to deactivate";
+		/// <summary>
+		/// SoftLock active. Click topmost form to deactivate
+		/// </summary>
+		public static readonly string SoftlockModeUnhideForms = @"SoftLock active. Click topmost form to deactivate";
+		/// <summary>
+		/// SoftLock active. Click to deactivate
+		/// </summary>
 		public static readonly string SoftlockModeUnhide = @"SoftLock active. Click to deactivate";
+		/// <summary>
+		/// SoftLock after inactivity
+		/// </summary>
 		public static readonly string SoftlockActive = @"SoftLock after inactivity";
+		/// <summary>
+		/// SoftLock when minimizing KeePass
+		/// </summary>
 		public static readonly string SoftlockOnMinimize = @"SoftLock when minimizing KeePass";
+		/// <summary>
+		/// SoftLock hides following sensitive information while still allowing Auto-Type as well as other integration:
+		/// - group list
+		/// - entry list
+		/// - entry view
+		/// - all forms NOT mentioned in config file property LockAssist.SoftlockExcludeForms
+		/// 
+		/// Valid Quick Unlock settings are required, Quick Unlock itself does NOT need to be active
+		/// </summary>
 		public static readonly string SoftlockDesc = @"SoftLock hides following sensitive information while still allowing Auto-Type as well as other integration:
 - group list
 - entry list
@@ -192,8 +310,8 @@ Valid Quick Unlock settings are required, Quick Unlock itself does NOT need to b
 		private static string GetFilename(string plugin, string lang)
 		{
 			string filename = UrlUtil.GetFileDirectory(WinUtil.GetExecutable(), true, true);
-				filename += KeePass.App.AppDefs.PluginsDir + UrlUtil.LocalDirSepChar + "Translations" + UrlUtil.LocalDirSepChar;
-				filename += plugin + "." + lang + ".language.xml";
+			filename += KeePass.App.AppDefs.PluginsDir + UrlUtil.LocalDirSepChar + "Translations" + UrlUtil.LocalDirSepChar;
+			filename += plugin + "." + lang + ".language.xml";
 			return filename;
 		}
 		#endregion
