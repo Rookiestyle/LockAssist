@@ -153,7 +153,7 @@ namespace LockAssist
 		private void cbPINMode_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			lQUMode.ForeColor = System.Drawing.SystemColors.ControlText;
-			if (cbPINMode.SelectedIndex == 0)
+			if (cbPINMode.SelectedIndex == 0 && Program.MainForm.ActiveDatabase != null && Program.MainForm.ActiveDatabase.IsOpen)
 			{
 				PwEntry check = QuickUnlock.GetQuickUnlockEntry(Program.MainForm.ActiveDatabase);
 				if (check != null) return;
