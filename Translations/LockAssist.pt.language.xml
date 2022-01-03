@@ -110,6 +110,9 @@ O banco de dados permanece bloqueado e só pode ser desbloqueado com a chave-mes
 	<key>Minutes</key>
 	<value>Minutos</value>
   </item>
+    <key>Seconds</key>
+    <value>Segundos</value>
+  </item>
   <item>
 	<key>OptionsLockWorkspace</key>
 	<value>Global '{0} / {1}'</value>
@@ -122,6 +125,10 @@ Se estiver ativo, TODOS os bancos de dados carregados serão bloqueados / desblo
 Nesse caso, depende do estado do documento ativo se é realizado um bloqueio global ou desbloqueio global.
 
 Se a tecla [SHIFT] for pressionada ao usar esses comandos, somente o documento ativo será processado.</value>
+  </item>
+  <item>
+    <key>SoftlockModeUnhideForms</key>
+    <value>SoftLock ativo. Clique no formulário superior para desativar</value>
   </item>
   <item>
     <key>SoftlockModeUnhide</key>
