@@ -35,13 +35,23 @@ namespace LockAssist
 
 		private QuickUnlock _qu = null;
 
+		private static KeePassLib.PwUuid _uuidCustomTbButtonClicked = KeePassLib.PwUuid.Zero;
+
+		static SoftLock()
+        {
+			var x = typeof(Program).Assembly.GetType("KeePass.Ecas.EcasEventIDs");
+			if (x == null) return;
+			var u = x.GetField("CustomTbButtonClicked").GetValue(null) as KeePassLib.PwUuid;
+			if (u != null) _uuidCustomTbButtonClicked = u;
+		}
+
 		internal SoftLock(QuickUnlock qu)
         {
 			Init(qu);
         }
 
 		private void Init(QuickUnlock qu)
-        {
+		{
 			FillMessages();
 			_qu = qu;
 			Program.MainForm.Resize += OnMinimize; //To allow Softlock mode on minimizing
@@ -254,6 +264,30 @@ namespace LockAssist
 				toolbar.Items["m_tbFind"].Enabled = bVisible;
 				toolbar.Items["m_tbEntryViewsDropDown"].Enabled = bVisible;
 				toolbar.Items["m_tbQuickFind"].Enabled = bVisible;
+
+				//Handle buttons for triggers
+				foreach (var tItem in toolbar.Items)
+                {
+					if (_uuidCustomTbButtonClicked.Equals(KeePassLib.PwUuid.Zero)) break;
+					ToolStripButton tsmi = tItem as ToolStripButton;
+					if (tsmi == null) continue;
+					if (!string.IsNullOrEmpty(tsmi.Name)) continue; //Trigger buttions don't have names
+					if (string.IsNullOrEmpty((string)tsmi.Tag)) continue; //Trigger buttons have their trigger name as tag
+					foreach (var t in Program.TriggerSystem.TriggerCollection)
+					{
+						foreach (var e in t.EventCollection)
+						{
+							if (!e.Type.Equals(_uuidCustomTbButtonClicked)) continue;
+							//KeePass.Ecas.EcasEventType xxxx = new KeePass.Ecas.EcasEvent()
+							//e.Type.Equals(KeePass.Ecas.EcasEvent.)
+							if (e.Parameters.Count != 1) continue;
+							if ((tsmi.Tag as string).Equals(e.Parameters[0], KeePassLib.Utility.StrUtil.CaseIgnoreCmp))
+							{
+								tsmi.Enabled = bVisible;
+							}
+						}
+					}
+				}
 			}
 			ApplyUICustomizations();
 		}
@@ -360,7 +394,6 @@ namespace LockAssist
 			bool bResetTimer = !m_SoftLocked && m_lMessagesForTimerRestart.Contains(m.Msg);
 
 			if (!bResetTimer) bResetTimer = CheckMouseMovement(m);
-
 			if (bResetTimer)
 			{
 				m_SLTimer.Enabled = false;
