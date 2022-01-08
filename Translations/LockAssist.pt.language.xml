@@ -4,10 +4,10 @@
     Increment the TranslationVersion every time the translation file is updated
 	Also update the version.info file
   -->
-  <TranslationVersion>3</TranslationVersion>
+  <TranslationVersion>4</TranslationVersion>
   <item>
     <key>FirstTimeInfo</key>
-    <value>Desloqueio Rápido (Quick Unlock) oferece dois modos de operação.
+    <value>Desbloqueio Rápido (Quick Unlock) oferece dois modos de operação.
 Por favor, escolha sua maneira preferida de trabalhar.</value>
   </item>
   <item>
@@ -16,7 +16,7 @@ Por favor, escolha sua maneira preferida de trabalhar.</value>
   </item>
   <item>
     <key>Active</key>
-    <value>Quick Unlock ativo</value>
+    <value>Desbloqueio Rápido ativo</value>
   </item>
   <item>
     <key>KeyProvNoQuickUnlock</key>
@@ -30,7 +30,7 @@ Desbloqueio Rápido não é possível.</value>
 - Chave-mestre do banco de dados contém uma senha
 - Opção 'Lembre-se Chave Mestra' está ativa
 
-Uma entrada de desbloqueio rápida existente será usada como reserva.</value>
+Uma entrada de desbloqueio rápido existente será usada como reserva.</value>
   </item>
   <item>
     <key>OptionsQUSettings</key>
@@ -110,6 +110,7 @@ O banco de dados permanece bloqueado e só pode ser desbloqueado com a chave-mes
 	<key>Minutes</key>
 	<value>Minutos</value>
   </item>
+  <item>
     <key>Seconds</key>
     <value>Segundos</value>
   </item>
@@ -128,23 +129,23 @@ Se a tecla [SHIFT] for pressionada ao usar esses comandos, somente o documento a
   </item>
   <item>
     <key>SoftlockModeUnhideForms</key>
-    <value>SoftLock ativo. Clique no formulário superior para desativar</value>
+    <value>Bloqueio Leve ativo. Clique no formulário superior para desativar</value>
   </item>
   <item>
     <key>SoftlockModeUnhide</key>
-    <value>SoftLock ativo. Clique para desativar</value>
+    <value>Bloqueio Leve ativo. Clique para desativar</value>
   </item>
   <item>
     <key>SoftlockActive</key>
-    <value>SoftLock depois da inatividade</value>
+    <value>Bloqueio Leve depois da inatividade</value>
   </item>
   <item>
     <key>SoftlockOnMinimize</key>
-    <value>SoftLock quando minimizando KeePass</value>
+    <value>Bloqueio Leve quando minimizando KeePass</value>
   </item>
   <item>
     <key>SoftlockDesc</key>
-    <value>SoftLock oculta as seguintes informações sensitivas enquanto ainda permite Auto-Type, bem como outra integração:
+    <value>Bloqueio Leve oculta as seguintes informações sensitivas enquanto ainda permite Auto-Type, bem como outra integração:
 - lista de grupos
 - lista de entradas
 - exibir entrada
