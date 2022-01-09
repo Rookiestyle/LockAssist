@@ -77,7 +77,6 @@ namespace LockAssist
         {
             if (!m_SoftLocked) return;
             if (LockAssistConfig.SL_ExcludeForms.Contains(e.Form.GetType().FullName.Replace("KeePass.Forms.", ""))) return;
-            PluginDebug.DebugMode = true;
 
             PluginDebug.AddInfo("Softlocked new window", e.Form.GetType().ToString());
             m_dHiddenForms.Add(e.Form, new SLFormProperties(e.Form.Opacity));
