@@ -76,7 +76,9 @@ namespace LockAssist
         private void OnWindowAdded(object sender, GwmWindowEventArgs e)
         {
             if (!m_SoftLocked) return;
-            if (LockAssistConfig.SL_ExcludeForms.Contains(e.Form.GetType().FullName.Replace("KeePass.Forms.", ""))) return;
+            string sFormname = e.Form.GetType().FullName;
+            if (e.Form is KeePassLib.Interfaces.IStatusLogger && sFormname.StartsWith("KeePass.Forms.")) return;  //don't hide status dialogs
+            if (LockAssistConfig.SL_ExcludeForms.Contains(sFormname.Replace("KeePass.Forms.", ""))) return;
 
             PluginDebug.AddInfo("Softlocked new window", e.Form.GetType().ToString());
             m_dHiddenForms.Add(e.Form, new SLFormProperties(e.Form.Opacity));

@@ -30,7 +30,7 @@ namespace LockAssist
 			tabQuickUnlock.Text = PluginTranslate.OptionsQUSettings;
 			lQUMode.Text = PluginTranslate.OptionsQUMode;
 			lQUPINLength.Text = PluginTranslate.OptionsQUPINLength;
-			tbModeExplain.Lines = PluginTranslate.OptionsQUReqInfoDB.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None); ;
+			tbModeExplain.Lines = PluginTranslate.OptionsQUReqInfoDB.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 			cbPINDBSpecific.Text = PluginTranslate.OptionsQUSettingsPerDB;
 			cbPINMode.Items.Clear();
 			cbPINMode.Items.AddRange(new string[] { PluginTranslate.OptionsQUModeEntry, PluginTranslate.OptionsQUModeDatabasePW });
