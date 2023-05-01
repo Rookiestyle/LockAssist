@@ -54,6 +54,12 @@ namespace LockAssist
 			cbSLInterval.Items.Add(PluginTranslate.Minutes);
 			cbSLInterval.SelectedIndex = 0;
 
+			cbSLValidityActive.Text = KPRes.ExpiryTime;
+			
+			cbSLValidityInterval.Items.Add(PluginTranslate.Seconds);
+			cbSLValidityInterval.Items.Add(PluginTranslate.Minutes);
+			cbSLValidityInterval.SelectedIndex = 0;
+
 		}
 
 		internal void InitEx(LockAssistConfig options)
@@ -105,7 +111,19 @@ namespace LockAssist
 				nSLSeconds.Value = LockAssistConfig.SL_Seconds / 60;
 			}
 			cbSLOnMinimize.Checked = LockAssistConfig.SL_OnMinimize;
-        }
+
+			if (LockAssistConfig.SL_ValiditySeconds < 60)
+			{
+				cbSLValidityInterval.SelectedIndex = 0;
+				nSLValiditySeconds.Value = LockAssistConfig.SL_ValiditySeconds;
+			}
+			else
+			{
+				cbSLValidityInterval.SelectedIndex = 1;
+				nSLValiditySeconds.Value = LockAssistConfig.SL_ValiditySeconds / 60;
+			}
+			cbSLValidityActive.Checked = LockAssistConfig.SL_ValidityActive;
+		}
 
         internal LockAssistConfig GetQuickUnlockOptions()
 		{
@@ -137,6 +155,9 @@ namespace LockAssist
 			slsResult.Seconds = (int)nSLSeconds.Value;
 			if (cbSLInterval.SelectedIndex == 1) slsResult.Seconds *= 60;
 			slsResult.SoftLockOnMinimize = cbSLOnMinimize.Checked;
+			slsResult.ValidityActive = cbSLValidityActive.Checked;
+			slsResult.ValiditySeconds = (int)nSLValiditySeconds.Value;
+			if (cbSLValidityInterval.SelectedIndex == 1) slsResult.ValiditySeconds *= 60;
 			return slsResult;
 		}
 

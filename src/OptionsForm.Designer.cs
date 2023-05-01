@@ -56,6 +56,9 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.cbLockWorkspace = new System.Windows.Forms.CheckBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cbSLValidityInterval = new System.Windows.Forms.ComboBox();
+            this.nSLValiditySeconds = new System.Windows.Forms.NumericUpDown();
+            this.cbSLValidityActive = new System.Windows.Forms.CheckBox();
             this.tcLockAssistOptions.SuspendLayout();
             this.tabQuickUnlock.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -65,6 +68,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nSLSeconds)).BeginInit();
             this.tabLockWorkspace.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nSLValiditySeconds)).BeginInit();
             this.SuspendLayout();
             // 
             // tcLockAssistOptions
@@ -278,7 +282,7 @@
             // tbSoftLockDesc
             // 
             this.tbSoftLockDesc.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tbSoftLockDesc.Location = new System.Drawing.Point(3, 141);
+            this.tbSoftLockDesc.Location = new System.Drawing.Point(3, 198);
             this.tbSoftLockDesc.Multiline = true;
             this.tbSoftLockDesc.Name = "tbSoftLockDesc";
             this.tbSoftLockDesc.ReadOnly = true;
@@ -287,6 +291,9 @@
             // 
             // pSL
             // 
+            this.pSL.Controls.Add(this.cbSLValidityInterval);
+            this.pSL.Controls.Add(this.nSLValiditySeconds);
+            this.pSL.Controls.Add(this.cbSLValidityActive);
             this.pSL.Controls.Add(this.cbSLInterval);
             this.pSL.Controls.Add(this.cbSLOnMinimize);
             this.pSL.Controls.Add(this.nSLSeconds);
@@ -294,7 +301,7 @@
             this.pSL.Dock = System.Windows.Forms.DockStyle.Top;
             this.pSL.Location = new System.Drawing.Point(3, 3);
             this.pSL.Name = "pSL";
-            this.pSL.Size = new System.Drawing.Size(827, 138);
+            this.pSL.Size = new System.Drawing.Size(827, 195);
             this.pSL.TabIndex = 1;
             // 
             // cbSLInterval
@@ -393,6 +400,40 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
+            // cbSLValidityInterval
+            // 
+            this.cbSLValidityInterval.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbSLValidityInterval.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbSLValidityInterval.FormattingEnabled = true;
+            this.cbSLValidityInterval.Location = new System.Drawing.Point(357, 127);
+            this.cbSLValidityInterval.Name = "cbSLValidityInterval";
+            this.cbSLValidityInterval.Size = new System.Drawing.Size(456, 39);
+            this.cbSLValidityInterval.TabIndex = 207;
+            // 
+            // nSLValiditySeconds
+            // 
+            this.nSLValiditySeconds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.nSLValiditySeconds.DecimalPlaces = 2;
+            this.nSLValiditySeconds.Location = new System.Drawing.Point(225, 127);
+            this.nSLValiditySeconds.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            0});
+            this.nSLValiditySeconds.Name = "nSLValiditySeconds";
+            this.nSLValiditySeconds.Size = new System.Drawing.Size(142, 38);
+            this.nSLValiditySeconds.TabIndex = 206;
+            // 
+            // cbSLValidityActive
+            // 
+            this.cbSLValidityActive.AutoSize = true;
+            this.cbSLValidityActive.Location = new System.Drawing.Point(14, 130);
+            this.cbSLValidityActive.Name = "cbSLValidityActive";
+            this.cbSLValidityActive.Size = new System.Drawing.Size(294, 36);
+            this.cbSLValidityActive.TabIndex = 205;
+            this.cbSLValidityActive.Text = "cbSLValidityActivw";
+            this.cbSLValidityActive.UseVisualStyleBackColor = true;
+            // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(16F, 31F);
@@ -418,6 +459,7 @@
             this.tabLockWorkspace.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nSLValiditySeconds)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -450,5 +492,8 @@
         private System.Windows.Forms.TextBox tbSoftLockDesc;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ComboBox cbSLInterval;
+        private System.Windows.Forms.ComboBox cbSLValidityInterval;
+        private System.Windows.Forms.NumericUpDown nSLValiditySeconds;
+        private System.Windows.Forms.CheckBox cbSLValidityActive;
     }
 }

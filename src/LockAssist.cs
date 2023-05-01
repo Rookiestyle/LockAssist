@@ -145,6 +145,8 @@ namespace LockAssist
 			LockAssistConfig.SL_Active = slsResult.Active;
 			LockAssistConfig.SL_Seconds = slsResult.Seconds;
 			LockAssistConfig.SL_OnMinimize = slsResult.SoftLockOnMinimize;
+			LockAssistConfig.SL_ValidityActive = slsResult.ValidityActive;
+			LockAssistConfig.SL_ValiditySeconds = slsResult.ValiditySeconds;
 			_sl.CheckSoftlockMode();
 		}
 #endregion

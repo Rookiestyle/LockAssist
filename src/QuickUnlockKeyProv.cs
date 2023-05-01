@@ -288,7 +288,7 @@ namespace LockAssist
 			if (bRemoved) PluginDebug.AddInfo("Quick Unlock - Removed Quick Unlock data", 10, "Database: " + ioc);
 		}
 
-		private static ProtectedBinary CreateMasterKeyHash(CompositeKey mk)
+		internal static ProtectedBinary CreateMasterKeyHash(CompositeKey mk)
 		{
 			List<byte[]> keys = new List<byte[]>();
 			int keysLength = 0;

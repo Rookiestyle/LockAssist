@@ -13,6 +13,21 @@ namespace LockAssist
 		private const string LockAssistSoftLockSeconds = "LockAssist.SoftLockSeconds";
 		private const string LockAssistSoftlockOnMinimize = "LockAssist.SoftlockOnMinimize";
 		private const string LockAssistSoftlockExcludeForms = "LockAssist.SoftlockExcludeForms";
+		private const string LockAssistSoftlockValidityActive = "LockAssist.SoftlockValidityActive";
+		private const string LockAssistSoftlockValiditySeconds = "LockAssist.SoftlockValiditySeconds";
+
+		public static bool SL_ValidityActive
+		{
+			get { return _config.GetBool(LockAssistSoftlockValidityActive, false); }
+			set { _config.SetBool(LockAssistSoftlockValidityActive, value); }
+		}
+
+		public static int SL_ValiditySeconds
+		{
+			get { return (int)_config.GetLong(LockAssistSoftlockValiditySeconds, 1800); }
+			set { _config.SetLong(LockAssistSoftlockValiditySeconds, value); }
+		}
+
 		public static bool SL_Active
 		{
 			get { return _config.GetBool(LockAssistSoftLockActive, true); }

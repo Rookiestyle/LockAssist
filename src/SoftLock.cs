@@ -21,6 +21,8 @@ namespace LockAssist
         internal bool Active;
         internal int Seconds;
         internal bool SoftLockOnMinimize;
+        internal bool ValidityActive;
+        internal int ValiditySeconds;
     }
 
     internal class SoftLock : IMessageFilter
@@ -181,9 +183,22 @@ namespace LockAssist
             //if ((GlobalWindowManager.WindowCount > 0) && LockAssistConfig.SL_ExcludeForms.Contains(GlobalWindowManager.TopWindow.GetType().Name)) return;
 
             Application.RemoveMessageFilter(this);
+            
+            if (RequestFullPassword())
+            {
+                DisableSoftlockUsingFullPassword();
+            }
+            else
+            {
+                DisableSoftlockUsingQU();
+            }
+            Application.AddMessageFilter(this);
+        }
+
+        private void DisableSoftlockUsingQU()
+        {
             m_UnlockForm = new UnlockForm();
             m_UnlockForm.Text = PluginTranslate.PluginName + " - Softlock";
-
             if (m_UnlockForm.ShowDialog(Program.MainForm) == DialogResult.OK)
             {
                 ProtectedString CheckQuickUnlockKey = m_UnlockForm.QuickUnlockKey;
@@ -194,11 +209,37 @@ namespace LockAssist
                     SetVisibility(true);
                     if (LockAssistConfig.SL_IsActive) m_SLTimer.Interval = LockAssistConfig.SL_Seconds * 1000;
                 }
-                else PluginDebug.AddError("Deactivate SoftLock", "Deactivation failed", "INvalid Quick Unlock key provided");
+                else PluginDebug.AddError("Deactivate SoftLock", "Deactivation failed", "Invalid Quick Unlock key provided");
             }
             if (m_UnlockForm != null) m_UnlockForm.Dispose();
             m_UnlockForm = null;
-            Application.AddMessageFilter(this);
+        }
+
+        private void DisableSoftlockUsingFullPassword()
+        {
+            using (KeyPromptForm kpf = new KeyPromptForm())
+            {
+                kpf.InitEx(Program.MainForm.ActiveDatabase.IOConnectionInfo, false, false);
+                kpf.Load += (o, e1) => { kpf.Text = "Softlock - " + kpf.Text; };
+                if (kpf.ShowDialog(Program.MainForm) == DialogResult.OK)
+                {
+                    ProtectedBinary pbKey = QuickUnlockKeyProv.CreateMasterKeyHash(kpf.CompositeKey);
+                    ProtectedBinary pbKeyDB = QuickUnlockKeyProv.CreateMasterKeyHash(Program.MainForm.ActiveDatabase.MasterKey);
+                    if (pbKey.Equals(pbKeyDB))
+                    {
+                        SetVisibility(true);
+                        if (LockAssistConfig.SL_IsActive) m_SLTimer.Interval = LockAssistConfig.SL_Seconds * 1000;
+                    }
+                    else PluginDebug.AddError("Deactivate SoftLock", "Deactivation failed", "Invalid key provided");
+                }
+            }
+        }
+
+        private bool RequestFullPassword()
+        {
+            if (!LockAssistConfig.SL_ValidityActive) return false;
+            var dtCheck = m_dtSoftlockActivation + new TimeSpan(0, 0, LockAssistConfig.SL_ValiditySeconds);
+            return dtCheck < DateTime.Now;
         }
 
         internal void CheckSoftlockMode()
@@ -226,6 +267,7 @@ namespace LockAssist
             }
         }
 
+        private DateTime m_dtSoftlockActivation = DateTime.MaxValue;
         internal void SetVisibility(bool bVisible)
         {
             List<string> lMsg = new List<string>();
@@ -233,6 +275,7 @@ namespace LockAssist
             lMsg.Add("SoftLock active: " + m_SoftLocked.ToString());
             if (m_SoftLocked)
             {
+                m_dtSoftlockActivation = DateTime.Now;
                 m_dHiddenForms.Clear();
                 foreach (Form f in Application.OpenForms)
                 {
@@ -260,7 +303,11 @@ namespace LockAssist
                 try { HandleForm(kvp.Key, kvp.Value, !m_SoftLocked, lMsg); }
                 catch (Exception ex) { lMsg.Add("Ex:" + ex.Message); }
             }
-            if (!m_SoftLocked) m_dHiddenForms.Clear();
+            if (!m_SoftLocked)
+            {
+                m_dHiddenForms.Clear();
+                m_dtSoftlockActivation = DateTime.MaxValue;
+            }
             PluginDebug.AddInfo("Toggle SoftLock", lMsg.ToArray());
         }
 
@@ -370,9 +417,13 @@ namespace LockAssist
 
             bHide = new Button();
             bHide.Name = buttonName;
+            //ONLY the button shown on the MainForm shall have a text
+            //Adjust the text based on the number of hidden forms
             if (m_dHiddenForms.Count == 0)
-                bHide.Text = PluginTranslate.SoftlockModeUnhide; //Display button on MainForm only, set text
-            else if (Application.OpenForms.Count > 1 && c == Application.OpenForms[Application.OpenForms.Count - 1]) //Display button on topmost form, set text
+            bHide.Text = PluginTranslate.SoftlockModeUnhide; //Display button on MainForm only, set text
+            //else if (Application.OpenForms.Count > 1 && c == Application.OpenForms[Application.OpenForms.Count - 1]) //Display button on topmost form, set text
+            //    bHide.Text = PluginTranslate.SoftlockModeUnhideForms;
+            else if (Application.OpenForms.Count > 1 && c == Program.MainForm) //Display button on topmost form, set text
                 bHide.Text = PluginTranslate.SoftlockModeUnhideForms;
 
             bHide.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
