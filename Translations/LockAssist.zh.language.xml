@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Translation>
+  <!-- 
+    Increment the TranslationVersion every time the translation file is updated
+	Also update the version.info file
+  -->
+  <TranslationVersion>5</TranslationVersion>
+  <item>
+    <key>FirstTimeInfo</key>
+    <value>快速解锁（Quick Unlock）提供两种操作模式。请选择您偏好的方式进行操作。</value>
+  </item>
+  <item>
+    <key>OptionsQUMode</key>
+    <value>选项 - 快速解锁模式</value>
+  </item>
+  <item>
+    <key>Active</key>
+    <value>激活快速解锁。</value>
+  </item>
+  <item>
+    <key>KeyProvNoQuickUnlock</key>
+    <value>未找到任何快速解锁密钥。无法进行快速解锁。</value>
+  </item>
+  <item>
+    <key>OptionsQUReqInfoDB</key>
+    <value>数据库密码模式的前提条件：
+- 数据库主密钥包含密码
+- “记住主密码”选项已启用
+
+现有的快速解锁条目将作为备用。</value>
+  </item>
+  <item>
+    <key>OptionsQUSettings</key>
+    <value>快速解锁</value>
+  </item>
+  <item>
+    <key>OptionsQUModeEntry</key>
+    <value>快速解锁密码</value>
+  </item>
+  <item>
+    <key>OptionsQUModeDatabasePW</key>
+    <value>数据库密码</value>
+  </item>
+  <item>
+    <key>OptionsQUEntryCreated</key>
+    <value>已创建快速解锁条目。请设置 PIN 作为快速解锁密码。</value>
+  </item>
+  <item>
+    <key>OptionsQUSettingsPerDB</key>
+    <value>为特定数据库配置设置。</value>
+  </item>
+  <item>
+    <key>OptionsSwitchDBToGeneral</key>
+    <value>已禁用特定数据库的设置。
+
+点击 '{0}' 使用全局设置来应用于此数据库。
+点击 '{1}' 将此数据库的设置作为新的全局设置。</value>
+  </item>
+  <item>
+    <key>OptionsQUPINLength</key>
+    <value>PIN的长度：</value>
+  </item>
+  <item>
+    <key>ButtonUnlock</key>
+    <value>解锁</value>
+  </item>
+  <item>
+    <key>UnlockLabel</key>
+    <value>快速解锁的PIN：</value>
+  </item>
+  <item>
+    <key>OptionsQUEntryCreate</key>
+    <value>找不到快速解锁条目。现在创建一个吗？</value>
+  </item>
+  <item>
+    <key>KeyProvNoCreate</key>
+    <value>无法使用此密钥提供程序创建密钥。</value>
+  </item>
+  <item>
+    <key>OptionsQUInfoRememberPassword</key>
+    <value>"记住主密码"需要在 选项 -> 安全 中启用。
+请确保激活此设置，不要忘记。</value>
+  </item>
+  <item>
+    <key>OptionsQUUseLast</key>
+    <value>将最后的 {0} 个字符用作PIN码。</value>
+  </item>
+  <item>
+    <key>OptionsQUUseFirst</key>
+    <value>将前 {0} 个字符用作PIN码。</value>
+  </item>
+  <item>
+    <key>WrongPIN</key>
+    <value>输入的PIN码不正确。数据库仍然被锁定，只能使用原始的主密码来解锁。</value>
+  </item>
+  <item>
+	<key>Hours</key>
+	<value>时</value>
+  </item>
+  <item>
+	<key>Minutes</key>
+	<value>分</value>
+  </item>
+  <item>
+    <key>Seconds</key>
+    <value>秒</value>
+  </item>
+  <item>
+	<key>OptionsLockWorkspace</key>
+	<value>全局 '{0} / {1}'</value>
+  </item>
+  <item>
+	<key>OptionsLockWorkspaceDesc</key>
+	<value>这个选项会改变'{0} / {1}'在菜单项和工具栏按钮中的行为。
+
+如果启用了该选项，所有加载的数据库都将使用这些命令进行锁定/解锁操作。
+在这种情况下，锁定或解锁的全局操作取决于活动文档的状态。
+
+如果在使用这些命令时按下[SHIFT]键，则只会处理活动文档。</value>
+  </item>
+  <item>
+    <key>SoftlockModeUnhideForms</key>
+    <value>软锁定已激活。请点击上方的表单以取消激活。</value>
+  </item>
+  <item>
+    <key>SoftlockModeUnhide</key>
+    <value>软锁定已激活。请点击以取消激活。</value>
+  </item>
+  <item>
+    <key>SoftlockActive</key>
+    <value>在一段时间的不活动后，将启用软锁定。</value>
+  </item>
+  <item>
+    <key>SoftlockOnMinimize</key>
+    <value>当最小化KeePass时，将启用软锁定。</value>
+  </item>
+  <item>
+    <key>SoftlockDesc</key>
+    <value>软锁定会隐藏以下敏感信息，同时仍然允许使用自动输入和其他集成功能：
+- 分组列表
+- 密码列表
+- 密码视图
+- 包含敏感数据的所有表单（输入表单等）
+
+您可以通过更改KeePass的配置文件来定义哪些表单被列入白名单。
+例如，在配置文件部分中创建一个LockAssist.SoftlockMode.ExcludeForms条目，以仅隐藏AboutForm和名为MySpecialForm的表单
+
+软锁使用快速解锁设置。
+这意味着，您需要为数据库定义快速解锁密钥。不需要快速解锁实际处于活动状态。</value>
+  </item>
+</Translation>
