@@ -51,19 +51,47 @@ namespace LockAssist
       set { _config.SetBool(LockAssistSoftlockOnMinimize, value); }
     }
 
+    private static List<string> m_SL_DefaultExcludeForms = new List<string>() {"AboutForm","AutoTypeCtxForm","CharPickerForm","ColumnsForm",
+          "HelpSourceForm","KeyPromptForm","LanguageForm","PluginsForm","PwGeneratorForm","UpdateCheckForm", "OtpKeyProv.Forms.OtpKeyPromptForm" };
+    private const string mc_ExcludeFormsText = "Enter form names to exclude from Softlock";
     public static List<string> SL_ExcludeForms
     {
       get
       {
-        string sForms = _config.GetString(LockAssistSoftlockExcludeForms, "AboutForm,AutoTypeCtxForm,CharPickerForm,ColumnsForm," +
-          "HelpSourceForm,KeyPromptForm,LanguageForm,PluginsForm,PwGeneratorForm,UpdateCheckForm");
-        var aForms = sForms.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+        //Set defaults
         List<string> lForms = new List<string>();
+        lForms.AddRange(m_SL_DefaultExcludeForms);
+
+        string sForms = _config.GetString(LockAssistSoftlockExcludeForms, string.Empty);
+        if (string.IsNullOrEmpty(sForms))
+        {
+          sForms = string.Empty;
+          SL_ExcludeForms = new List<string>() { mc_ExcludeFormsText };
+        }
+        var aForms = sForms.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
         foreach (var sForm in aForms)
         {
+          if (sForm == mc_ExcludeFormsText) continue;
+          if (sForm.Trim().StartsWith("-")) continue;
           if (!lForms.Contains(sForm.Trim())) lForms.Add(sForm.Trim());
         }
+        foreach (var sForm in aForms)
+        {
+          if (sForm == mc_ExcludeFormsText) continue; 
+          if (!sForm.Trim().StartsWith("-")) continue;
+          lForms.Remove(sForm.Trim().Substring(1));
+        }
         return lForms;
+      }
+      set
+      {
+        string sForms = string.Empty;
+        foreach (var s in value)
+        {
+          if (!string.IsNullOrEmpty(sForms)) sForms += ",";
+          sForms += s;
+        }
+        _config.SetString(LockAssistSoftlockExcludeForms, sForms);
       }
     }
   }
