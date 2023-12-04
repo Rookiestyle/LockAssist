@@ -217,22 +217,48 @@ namespace LockAssist
 
     private void DisableSoftlockUsingFullPassword()
     {
-      using (KeyPromptForm kpf = new KeyPromptForm())
+      ProtectedBinary pbKey = null;
+      ProtectedBinary pbKeyDB = null;
+
+      try
       {
-        kpf.InitEx(Program.MainForm.ActiveDatabase.IOConnectionInfo, false, false);
-        kpf.Load += (o, e1) => { kpf.Text = "Softlock - " + kpf.Text; };
-        if (kpf.ShowDialog(Program.MainForm) == DialogResult.OK)
+        KeePassLib.Delegates.GFunc<KeyPromptForm> gfKeyPromptForm = delegate ()
         {
-          ProtectedBinary pbKey = QuickUnlockKeyProv.CreateMasterKeyHash(kpf.CompositeKey);
-          ProtectedBinary pbKeyDB = QuickUnlockKeyProv.CreateMasterKeyHash(Program.MainForm.ActiveDatabase.MasterKey);
-          if (pbKey.Equals(pbKeyDB))
-          {
-            SetVisibility(true);
-            if (LockAssistConfig.SL_IsActive) m_SLTimer.Interval = LockAssistConfig.SL_Seconds * 1000;
-          }
-          else PluginDebug.AddError("Deactivate SoftLock", "Deactivation failed", "Invalid key provided");
+          var f = new KeyPromptForm();
+          f.InitEx(Program.MainForm.ActiveDatabase.IOConnectionInfo, false, false);
+          f.Load += (o, e1) => { f.Text = "Softlock - " + f.Text; };
+          return f;
+        };
+        KeePassLib.Delegates.GFunc<KeyPromptForm, KeePassLib.Keys.CompositeKey> gfKeyPromptFormResult = delegate (KeyPromptForm f)
+        {
+          var rCK = f.CompositeKey;
+          UIUtil.DestroyForm(f);
+          return rCK;
+        };
+
+        KeePassLib.Keys.CompositeKey ckMasterkey = null;
+        var dr = Tools.ShowDialog(Program.Config.Security.MasterKeyOnSecureDesktop, gfKeyPromptForm, gfKeyPromptFormResult, out ckMasterkey);
+        if (dr != DialogResult.OK) return;
+        pbKey = QuickUnlockKeyProv.CreateMasterKeyHash(ckMasterkey);
+        pbKeyDB = QuickUnlockKeyProv.CreateMasterKeyHash(Program.MainForm.ActiveDatabase.MasterKey);
+      }
+      catch
+      {
+        using (KeyPromptForm kpf = new KeyPromptForm())
+        {
+          kpf.InitEx(Program.MainForm.ActiveDatabase.IOConnectionInfo, false, false);
+          kpf.Load += (o, e1) => { kpf.Text = "Softlock - " + kpf.Text; };
+          if (kpf.ShowDialog(Program.MainForm) != DialogResult.OK) return;
+          pbKey = QuickUnlockKeyProv.CreateMasterKeyHash(kpf.CompositeKey);
+          pbKeyDB = QuickUnlockKeyProv.CreateMasterKeyHash(Program.MainForm.ActiveDatabase.MasterKey);
         }
       }
+      if (pbKey.Equals(pbKeyDB))
+      {
+        SetVisibility(true);
+        if (LockAssistConfig.SL_IsActive) m_SLTimer.Interval = LockAssistConfig.SL_Seconds * 1000;
+      }
+      else PluginDebug.AddError("Deactivate SoftLock", "Deactivation failed", "Invalid key provided");
     }
 
     private bool RequestFullPassword()
