@@ -197,22 +197,36 @@ namespace LockAssist
 
     private void DisableSoftlockUsingQU()
     {
-      m_UnlockForm = new UnlockForm();
-      m_UnlockForm.Text = PluginTranslate.PluginName + " - Softlock";
-      if (m_UnlockForm.ShowDialog(Program.MainForm) == DialogResult.OK)
-      {
-        ProtectedString CheckQuickUnlockKey = m_UnlockForm.QuickUnlockKey;
-        ProtectedString QuickUnlockKey = _qu.GetQuickUnlockKey(Program.MainForm.ActiveDatabase);
-        var lac = LockAssistConfig.GetQuickUnlockOptions(Program.MainForm.ActiveDatabase);
-        if ((QuickUnlockKey == null) || CheckQuickUnlockKey.Equals(_qu.TrimQuickUnlockKey(QuickUnlockKey, lac), false))
-        {
-          SetVisibility(true);
-          if (LockAssistConfig.SL_IsActive) m_SLTimer.Interval = LockAssistConfig.SL_Seconds * 1000;
-        }
-        else PluginDebug.AddError("Deactivate SoftLock", "Deactivation failed", "Invalid Quick Unlock key provided");
-      }
       if (m_UnlockForm != null) m_UnlockForm.Dispose();
-      m_UnlockForm = null;
+
+      KeePassLib.Delegates.GFunc<UnlockForm> fConstruct = delegate()
+      {
+        m_UnlockForm = new UnlockForm();
+        m_UnlockForm.Text = PluginTranslate.PluginName + " - Softlock";
+        return m_UnlockForm;
+      };
+
+      KeePassLib.Delegates.GFunc<UnlockForm, ProtectedString> fResultBuilder = delegate(UnlockForm f)
+      {
+        ProtectedString r = f.QuickUnlockKey;
+        UIUtil.DestroyForm(m_UnlockForm);
+        m_UnlockForm = null;
+        return r;
+      };
+
+      ProtectedString psCheckQuickUnlockKey = new ProtectedString();
+      DialogResult dr = Tools.ShowDialog(Program.Config.Security.MasterKeyOnSecureDesktop, fConstruct, fResultBuilder, out psCheckQuickUnlockKey);
+
+      if (dr != DialogResult.OK) return;
+
+      ProtectedString psQuickUnlockKey = _qu.GetQuickUnlockKey(Program.MainForm.ActiveDatabase);
+      var lacOptions = LockAssistConfig.GetQuickUnlockOptions(Program.MainForm.ActiveDatabase);
+      if ((psQuickUnlockKey == null) || psCheckQuickUnlockKey.Equals(_qu.TrimQuickUnlockKey(psQuickUnlockKey, lacOptions), false))
+      {
+        SetVisibility(true);
+        if (LockAssistConfig.SL_IsActive) m_SLTimer.Interval = LockAssistConfig.SL_Seconds * 1000;
+      }
+      else PluginDebug.AddError("Deactivate SoftLock", "Deactivation failed", "Invalid Quick Unlock key provided");
     }
 
     private void DisableSoftlockUsingFullPassword()
