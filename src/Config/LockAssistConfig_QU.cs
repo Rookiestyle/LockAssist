@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using KeePass;
 using KeePassLib;
 
 namespace LockAssist
@@ -11,6 +12,7 @@ namespace LockAssist
   {
     public bool QU_Active = false;
     public bool QU_DBSpecific = false;
+    public int QU_DBSpecificUnlockAttempts;
     public bool QU_UsePassword = true;
     public bool QU_UsePasswordFromEnd = true;
     public int QU_PINLength = 4;
@@ -33,6 +35,7 @@ namespace LockAssist
         if (!int.TryParse(db.CustomData.Get(LockAssistKeyLength), out QU_PINLength)) QU_PINLength = 4;
         QU_UsePasswordFromEnd = db.CustomData.Get(LockAssistKeyFromEnd) == "true";
         if (!int.TryParse(db.CustomData.Get(LockAssistQU_ValiditySeconds), out QU_ValiditySeconds)) QU_ValiditySeconds = 0;
+        if (!int.TryParse(db.CustomData.Get(LockAssistQU_DBSpecificUnlockAttempts), out QU_DBSpecificUnlockAttempts)) QU_DBSpecificUnlockAttempts = 1;
       }
       else
       {
@@ -41,7 +44,14 @@ namespace LockAssist
         QU_PINLength = (int)_config.GetLong(LockAssistKeyLength, 4);
         QU_UsePasswordFromEnd = _config.GetBool(LockAssistKeyFromEnd, true);
         QU_ValiditySeconds = (int)_config.GetLong(LockAssistQU_ValiditySeconds, 0);
+        if (!int.TryParse(db.CustomData.Get(LockAssistQU_DBSpecificUnlockAttempts), out QU_DBSpecificUnlockAttempts)) QU_DBSpecificUnlockAttempts = 1;
       }
+    }
+
+    public int GetQU_DBSpecificUnlockAttempts()
+    {
+      if (QU_DBSpecific) return 1;
+      return Math.Max(Program.Config.Security.MasterKeyTries, QU_DBSpecificUnlockAttempts);
     }
 
     public static bool QU_FirstTime
@@ -54,6 +64,7 @@ namespace LockAssist
     {
       if (QU_Active != comp.QU_Active) return true;
       if (CheckDBSpecific && (QU_DBSpecific != comp.QU_DBSpecific)) return true;
+      if (CheckDBSpecific && (QU_DBSpecificUnlockAttempts != comp.QU_DBSpecificUnlockAttempts)) return true;
       if (QU_UsePassword != comp.QU_UsePassword) return true;
       if (QU_PINLength != comp.QU_PINLength) return true;
       if (QU_UsePasswordFromEnd != comp.QU_UsePasswordFromEnd) return true;
@@ -70,6 +81,7 @@ namespace LockAssist
       QU_PINLength = NewOptions.QU_PINLength;
       QU_UsePasswordFromEnd = NewOptions.QU_UsePasswordFromEnd;
       QU_ValiditySeconds = NewOptions.QU_ValiditySeconds;
+      QU_DBSpecificUnlockAttempts = NewOptions.QU_DBSpecificUnlockAttempts;
       return SwitchToNoDBSpecific;
     }
 
@@ -84,6 +96,7 @@ namespace LockAssist
         db.CustomData.Set(LockAssistKeyFromEnd, QU_UsePasswordFromEnd ? "true" : "false");
         db.CustomData.Set(LockAssistQuickUnlockDBSpecific, "true");
         db.CustomData.Set(LockAssistQU_ValiditySeconds, QU_ValiditySeconds.ToString());
+        db.CustomData.Set(LockAssistQU_DBSpecificUnlockAttempts, QU_DBSpecificUnlockAttempts.ToString()); 
         if (bChanged) QU_FlagDBChanged(db);
       }
       else
@@ -113,6 +126,8 @@ namespace LockAssist
       deleted |= db.CustomData.Remove(LockAssistKeyFromEnd);
       deleted |= db.CustomData.Remove(LockAssistQuickUnlockDBSpecific);
       deleted |= db.CustomData.Remove(LockAssistQU_ValiditySeconds);
+      //Don't delete this value!
+      //deleted |= db.CustomData.Remove(LockAssistQU_DBSpecificUnlockAttempts); 
       if (deleted)
       {
         QU_FlagDBChanged(db);
@@ -127,5 +142,6 @@ namespace LockAssist
     private const string LockAssistQU_ValiditySeconds = "LockAssist.QU_validitySeconds";
     private const string LockAssistFirstTime = "LockAssist.FirstTime";
     private const string LockAssistQuickUnlockDBSpecific = "LockAssist.QuickUnlockDBSpecific";
+    private const string LockAssistQU_DBSpecificUnlockAttempts = "LockAssist.QuickUnlockDBSpecificUnlockAttempts";
   }
 }

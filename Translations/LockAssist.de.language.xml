@@ -4,7 +4,7 @@
     Increment the TranslationVersion every time the translation file is updated
 	Also update the version.info file
   -->
-  <TranslationVersion>5</TranslationVersion>
+  <TranslationVersion>6</TranslationVersion>
   <item>
     <key>FirstTimeInfo</key>
     <value>Quick Unlock bietet verschiedene Konfigurationsmöglichkeiten.
@@ -53,6 +53,10 @@ Bitte bearbeiten und Quick Unlock PIN als Password setzen.</value>
   <item>
     <key>OptionsQUSettingsPerDB</key>
     <value>Konfiguration nur für aktive Datenbank</value>
+  </item>
+  <item>
+    <key>OptionsQUSettingsPerDB_UnlockAttempts</key>
+    <value>Quick Unlock Versuche:</value>
   </item>
   <item>
     <key>OptionsSwitchDBToGeneral</key>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using KeePass.Forms;
 using KeePass.Plugins;
@@ -51,20 +52,69 @@ namespace LockAssist
       _lw = new LockWorkspace();
       _sl = new SoftLock(_qu);
 
+      m_host.MainWindow.FormLoadPost += OnFormLoadPost;
+
       return true;
     }
 
+
+    private List<Delegate> m_dKeeResize = new List<Delegate>();
+    private void OnFormLoadPost(object sender, EventArgs e)
+    {
+      var lEventHandlers = EventHelper.GetEventHandlersOfStaticClass(typeof(GlobalWindowManager), "WindowAdded");
+      if (lEventHandlers == null)
+      {
+        PluginDebug.AddError("Could not load eventhandlers of GlobalWindowManager.WindowAdded", 0);
+        return;
+      }
+      m_dKeeResize = lEventHandlers.Where(y => y.Target != null && 
+        (y.Target.GetType().Name.Contains("KeeResize") || y.Target.GetType().Name.Contains("GlobalSearch"))).
+        ToList();
+      if (m_dKeeResize.Count == 0)
+      {
+        PluginDebug.AddInfo("GlobalWindowManager.WindowAdded eventhandler of KeeResize or GlobalSearch NOT found", 0);
+        return;
+      }
+      else
+      {
+        PluginDebug.AddInfo("GlobalWindowManager.WindowAdded eventhandler of KeeResize or GlobalSearch found", 0);
+      };
+      EventHelper.RemoveEventHandlersOfStaticClass(typeof(GlobalWindowManager), "WindowAdded", m_dKeeResize);
+      PluginDebug.AddInfo("Removed GlobalWindowManager.WindowAdded eventhandler of KeeResize ", 0);
+    }
+    
     private void OnWindowAdded(object sender, GwmWindowEventArgs e)
     {
-      if (!(e.Form is KeyPromptForm) && !(e.Form is KeyCreationForm)) return;
-      PluginDebug.AddInfo(e.Form.GetType().Name + " added", 0);
-      e.Form.Shown += OnKeyFormShown;
+      if (e.Form is KeyPromptForm || e.Form is KeyCreationForm)
+      {
+        PluginDebug.AddInfo(e.Form.GetType().Name + " added", 0);
+        e.Form.Shown += OnKeyFormShown;
+        if (LockAssistConfig.LW_Active)
+        {
+          var f = e.Form as Form;
+          if ((f is KeyPromptForm) && LockWorkspace.ShallStopGlobalUnlock())
+          {
+            GlobalWindowManager.RemoveWindow(sender as Form);
+            f.Close();
+            f.Dispose();
+            _lw.OnEnhancedWorkspaceLockUnlock(sender, null);
+            e.Form.Shown -= OnKeyFormShown;
+          }
+          LockWorkspace.OnKeyFormShown(f, e);
+        }
+      }
+      for (int i = 0; i < m_dKeeResize.Count; i++)
+      {
+        PluginDebug.AddInfo("Calling other GlobalWindowManager.WindowAdded eventhandler", 0, m_dKeeResize[i].Method.Name, m_dKeeResize[i].Target == null ? string.Empty : m_dKeeResize[i].Target.ToString());
+        m_dKeeResize[i].DynamicInvoke(new object[] { sender, e });
+      }
     }
 
     private void OnKeyFormShown(object sender, EventArgs e)
     {
       Form f = sender as Form;
       if (f == null) return;
+      /*
       if (LockAssistConfig.LW_Active)
       {
         if ((f is KeyPromptForm) && LockWorkspace.ShallStopGlobalUnlock())
@@ -76,7 +126,13 @@ namespace LockAssist
           return;
         }
         LockWorkspace.OnKeyFormShown(f, e);
+        for (int i = 0; i < m_dKeeResize.Count; i++)
+        {
+          PluginDebug.AddInfo("Calling other GlobalWindowManager.WindowAdded eventhandler", 0, m_dKeeResize[i].Method.Name, m_dKeeResize[i].Target == null ? string.Empty : m_dKeeResize[i].Target.ToString());
+          m_dKeeResize[i].DynamicInvoke(new object[] { sender, null });
+        }
       }
+      */
       QuickUnlock.OnKeyFormShown(f, false);
     }
 

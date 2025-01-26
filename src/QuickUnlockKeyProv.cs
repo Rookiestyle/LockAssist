@@ -54,6 +54,7 @@ namespace LockAssist
 
     private static Dictionary<string, ProtectedBinary> m_hashedKey = new Dictionary<string, ProtectedBinary>();
     private static Dictionary<string, QuickUnlockOldKeyInfo> m_originalKey = new Dictionary<string, QuickUnlockOldKeyInfo>();
+    private static Dictionary<string, int> m_DBSpecificUnlockAttempts = new Dictionary<string, int>();
 
     private static Timer m_timer = new Timer();
 
@@ -80,21 +81,29 @@ namespace LockAssist
         return null;
       }
 
-      var fQuickUnlock = new UnlockForm();
-      if (KeePass.UI.UIUtil.ShowDialogNotValue(fQuickUnlock, DialogResult.OK)) return null;
-      ProtectedString psQuickUnlockKey = fQuickUnlock.QuickUnlockKey;
-      KeePass.UI.UIUtil.DestroyForm(fQuickUnlock);
-
-      //Remove Quick Unlock data - there is only one attempt
-      m_hashedKey.Remove(ctx.DatabasePath);
-      if (KeePass.UI.GlobalWindowManager.TopWindow is KeePass.Forms.KeyPromptForm && !VerifyPin(ctx, psQuickUnlockKey))
+      int iAttempt = 0;
+      int iMaxFailed = 1;
+      m_DBSpecificUnlockAttempts.TryGetValue(ctx.DatabasePath, out iMaxFailed);
+      while (iAttempt++ < iMaxFailed)
       {
-        m_originalKey.Remove(ctx.DatabasePath);
-        QuickUnlock.OnKeyFormShown(KeePass.UI.GlobalWindowManager.TopWindow, true);
-        Tools.ShowError(PluginTranslate.WrongPIN);
-        return null;
+        var fQuickUnlock = new UnlockForm();
+        if (KeePass.UI.UIUtil.ShowDialogNotValue(fQuickUnlock, DialogResult.OK)) return null;
+        ProtectedString psQuickUnlockKey = fQuickUnlock.QuickUnlockKey;
+        KeePass.UI.UIUtil.DestroyForm(fQuickUnlock);
+
+        //Remove Quick Unlock data - there is only one attempt
+        m_hashedKey.Remove(ctx.DatabasePath);
+        if (KeePass.UI.GlobalWindowManager.TopWindow is KeePass.Forms.KeyPromptForm && !VerifyPin(ctx, psQuickUnlockKey))
+        {
+          continue;
+        }
+        return DecryptKey(psQuickUnlockKey, encryptedKey).ReadData();
       }
-      return DecryptKey(psQuickUnlockKey, encryptedKey).ReadData();
+      m_originalKey.Remove(ctx.DatabasePath);
+      m_DBSpecificUnlockAttempts.Remove(ctx.DatabasePath);
+      QuickUnlock.OnKeyFormShown(KeePass.UI.GlobalWindowManager.TopWindow, true);
+      Tools.ShowError(PluginTranslate.WrongPIN);
+      return null;
     }
 
     private static void RestoreOldMasterKeyInternal(PwDatabase db, IOConnectionInfo ioConnection, QuickUnlockOldKeyInfo quOldKey)
@@ -193,16 +202,16 @@ namespace LockAssist
       return quOldKey;
     }
 
-    internal static void AddDb(PwDatabase db, ProtectedString QuickUnlockKey, bool savePw)
+    internal static void AddDb(PwDatabase db, ProtectedString QuickUnlockKey, bool savePw, int iMaxQUAttempts)
     {
       ExpireOutdatedKeys();
       RemoveDb(db);
       ProtectedBinary pbKey = CreateMasterKeyHash(db.MasterKey);
       m_hashedKey.Add(db.IOConnectionInfo.Path, EncryptKey(QuickUnlockKey, pbKey));
-      AddOldMasterKey(db, QuickUnlockKey, savePw);
+      AddOldMasterKey(db, QuickUnlockKey, savePw, iMaxQUAttempts);
     }
 
-    private static void AddOldMasterKey(PwDatabase db, ProtectedString QuickUnlockKey, bool savePw)
+    private static void AddOldMasterKey(PwDatabase db, ProtectedString QuickUnlockKey, bool savePw, int iMaxQUAttempts)
     {
       QuickUnlockOldKeyInfo quOldKey = new QuickUnlockOldKeyInfo();
       quOldKey.QuickUnlockKey = QuickUnlockKey;
@@ -233,12 +242,15 @@ namespace LockAssist
         quOldKey.tsValidity = TimeSpan.Zero;
       }
       m_originalKey.Add(db.IOConnectionInfo.Path, quOldKey);
+      m_DBSpecificUnlockAttempts.Remove(db.IOConnectionInfo.Path);
+      m_DBSpecificUnlockAttempts.Add(db.IOConnectionInfo.Path, iMaxQUAttempts);
     }
 
     internal static void Clear()
     {
       m_hashedKey.Clear();
       m_originalKey.Clear();
+      m_DBSpecificUnlockAttempts.Clear();
     }
 
     internal static bool HasDB(string db)
@@ -246,6 +258,7 @@ namespace LockAssist
       ExpireOutdatedKeys();
       if (m_hashedKey.ContainsKey(db)) return true;
       m_originalKey.Remove(db);
+      m_DBSpecificUnlockAttempts.Remove(db);
       return false;
     }
 
@@ -283,6 +296,7 @@ namespace LockAssist
     {
       bool bRemoved = m_hashedKey.Remove(ioc);
       bRemoved |= m_originalKey.Remove(ioc);
+      bRemoved |= m_DBSpecificUnlockAttempts.Remove(ioc);
       if (bRemoved) PluginDebug.AddInfo("Quick Unlock - Removed Quick Unlock data", 10, "Database: " + ioc);
     }
 

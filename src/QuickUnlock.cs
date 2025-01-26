@@ -82,7 +82,9 @@ namespace LockAssist
         PluginDebug.AddError("Quick Unlock: Can't derive key, Quick Unlock not possible");
         return;
       }
-      QuickUnlockKeyProv.AddDb(e.Database, QuickUnlockKey, Program.Config.Security.MasterPassword.RememberWhileOpen && MyOptions.QU_UsePassword);
+      QuickUnlockKeyProv.AddDb(e.Database, QuickUnlockKey, 
+                                Program.Config.Security.MasterPassword.RememberWhileOpen && MyOptions.QU_UsePassword,
+                                MyOptions.GetQU_DBSpecificUnlockAttempts());
       PluginDebug.AddInfo("Quick Unlock: key added");
     }
     #endregion

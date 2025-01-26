@@ -55,6 +55,10 @@ Please edit and set Quick Unlock PIN as password</value>
     <value>Settings are DB specific</value>
   </item>
   <item>
+    <key>OptionsQUSettingsPerDB_UnlockAttempts</key>
+    <value>Quick Unlock Attempts:</value>
+  </item>
+  <item>
     <key>OptionsSwitchDBToGeneral</key>
     <value>Database specific settings switched off.
 

@@ -15,6 +15,8 @@ namespace LockAssist
 
     private static System.Reflection.MethodInfo m_miEditSelectedEntry = null;
 
+    private bool m_bTabQUShown = false;
+
     public OptionsForm()
     {
       InitializeComponent();
@@ -58,6 +60,10 @@ namespace LockAssist
       cbSLValidityInterval.Items.Add(PluginTranslate.Minutes);
       cbSLValidityInterval.SelectedIndex = 0;
 
+      lQUAttempts.Text = PluginTranslate.OptionsQUSettingsPerDB_UnlockAttempts;
+      lQUAttempts.Left = nQUAttempts.Left - 10 - lQUAttempts.Width;
+      cbPINDBSpecific_CheckedChanged(null, null);
+      nQUAttempts.Maximum = Program.Config.Security.MasterKeyTries;
     }
 
     internal void InitEx(LockAssistConfig options)
@@ -75,6 +81,11 @@ namespace LockAssist
       rbPINEnd.Checked = options.QU_UsePasswordFromEnd;
       rbPINFront.Checked = !options.QU_UsePasswordFromEnd;
       cbPINDBSpecific.Checked = options.QU_DBSpecific;
+      try
+      {
+        nQUAttempts.Value = options.QU_DBSpecificUnlockAttempts;
+      }
+      catch { }
       FirstTime = LockAssistConfig.QU_FirstTime;
       cbQUValidityActive.Checked = options.QU_ValiditySeconds > 0;
       decimal minutes = options.QU_ValiditySeconds / 60;
@@ -131,6 +142,7 @@ namespace LockAssist
       if (!int.TryParse(tbPINLength.Text, out options.QU_PINLength)) options.QU_PINLength = 4;
       options.QU_UsePasswordFromEnd = rbPINEnd.Checked;
       options.QU_DBSpecific = cbPINDBSpecific.Checked;
+      options.QU_DBSpecificUnlockAttempts = (int)nQUAttempts.Value;
 
       if (cbQUValidityActive.Checked)
       {
@@ -171,6 +183,7 @@ namespace LockAssist
 
     private void cbPINMode_SelectedIndexChanged(object sender, EventArgs e)
     {
+      if (!m_bTabQUShown) return;
       lQUMode.ForeColor = System.Drawing.SystemColors.ControlText;
       if (cbPINMode.SelectedIndex == 0 && Program.MainForm.ActiveDatabase != null && Program.MainForm.ActiveDatabase.IsOpen)
       {
@@ -229,6 +242,19 @@ namespace LockAssist
         cbPINDBSpecific.Enabled = false;
         cbPINDBSpecific.Checked = false;
       }
+      tcLockAssistOptions.Parent.Parent.Enter += OnLockAssisstOptionsEnter;
+    }
+
+    private void OnLockAssisstOptionsEnter(object sender, EventArgs e)
+    {
+      m_bTabQUShown = true;
+      cbPINMode_SelectedIndexChanged(sender, e);
+    }
+
+    private void cbPINDBSpecific_CheckedChanged(object sender, EventArgs e)
+    {
+      lQUAttempts.Enabled = cbPINDBSpecific.Checked;
+      nQUAttempts.Enabled = cbPINDBSpecific.Checked;
     }
   }
 }
