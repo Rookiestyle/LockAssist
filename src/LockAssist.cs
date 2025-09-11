@@ -94,7 +94,8 @@ namespace LockAssist
           var f = e.Form as Form;
           if ((f is KeyPromptForm) && LockWorkspace.ShallStopGlobalUnlock())
           {
-            GlobalWindowManager.RemoveWindow(sender as Form);
+            PluginDebug.AddInfo("Stop global unlock", 10);
+            GlobalWindowManager.RemoveWindow(f);
             f.Close();
             f.Dispose();
             _lw.OnEnhancedWorkspaceLockUnlock(sender, null);
