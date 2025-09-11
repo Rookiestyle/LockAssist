@@ -50,8 +50,8 @@ namespace LockAssist
 
     public int GetQU_DBSpecificUnlockAttempts()
     {
-      if (QU_DBSpecific) return 1;
-      return Math.Max(Program.Config.Security.MasterKeyTries, QU_DBSpecificUnlockAttempts);
+      if (!QU_DBSpecific) return 1;
+      return Math.Max(1, QU_DBSpecificUnlockAttempts);
     }
 
     public static bool QU_FirstTime
@@ -126,8 +126,7 @@ namespace LockAssist
       deleted |= db.CustomData.Remove(LockAssistKeyFromEnd);
       deleted |= db.CustomData.Remove(LockAssistQuickUnlockDBSpecific);
       deleted |= db.CustomData.Remove(LockAssistQU_ValiditySeconds);
-      //Don't delete this value!
-      //deleted |= db.CustomData.Remove(LockAssistQU_DBSpecificUnlockAttempts); 
+      deleted |= db.CustomData.Remove(LockAssistQU_DBSpecificUnlockAttempts); 
       if (deleted)
       {
         QU_FlagDBChanged(db);

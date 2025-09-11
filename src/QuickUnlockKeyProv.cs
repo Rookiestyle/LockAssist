@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Windows.Forms;
+using KeePass.Resources;
+using KeePass.Util;
 using KeePassLib;
 using KeePassLib.Cryptography;
 using KeePassLib.Cryptography.Cipher;
@@ -29,6 +32,7 @@ namespace LockAssist
     public ProtectedString QuickUnlockKey = ProtectedString.EmptyEx;
     public ProtectedBinary pwHash = null;
     public string keyFile = string.Empty;
+    public ProtectedBinary pbKeyFile = null;
     public string CustomKeyProviderName = string.Empty;
     public ProtectedBinary CustomKeyProviderData = null;
     public bool account = false;
@@ -80,13 +84,14 @@ namespace LockAssist
         Tools.ShowError(PluginTranslate.KeyProvNoQuickUnlock);
         return null;
       }
-
+      
       int iAttempt = 0;
       int iMaxFailed = 1;
       m_DBSpecificUnlockAttempts.TryGetValue(ctx.DatabasePath, out iMaxFailed);
       while (iAttempt++ < iMaxFailed)
       {
         var fQuickUnlock = new UnlockForm();
+        fQuickUnlock.SetAttempts(iMaxFailed, iAttempt);
         if (KeePass.UI.UIUtil.ShowDialogNotValue(fQuickUnlock, DialogResult.OK)) return null;
         ProtectedString psQuickUnlockKey = fQuickUnlock.QuickUnlockKey;
         KeePass.UI.UIUtil.DestroyForm(fQuickUnlock);
@@ -130,10 +135,24 @@ namespace LockAssist
         ck.AddUserKey(p);
         lMsg.Add("Add password to masterkey: " + (bRestoreSuccess ? "Password decrypted and restored" : "Password restore failed, empty password set"));
       }
+      bool bFileError = false;
       if (!string.IsNullOrEmpty(quOldKey.keyFile))
       {
-        ck.AddUserKey(new KcpKeyFile(quOldKey.keyFile));
-        lMsg.Add("Add key file to masterkey");
+        var kfRestored = RestoreKeyFile(quOldKey, lMsg, out bFileError);
+        if (kfRestored != null)
+        {
+          ck.AddUserKey(kfRestored);
+          lMsg.Add("Add key file to masterkey");
+        }
+        else
+        {
+          lMsg.Add("Error adding key file to masterkey");
+          string sKeyFileError = KPRes.KeyFileError;
+          if (sKeyFileError.EndsWith(".")) sKeyFileError = sKeyFileError.Substring(0, sKeyFileError.Length - 1);
+          sKeyFileError += ": " + quOldKey.keyFile;
+          MessageService.ShowWarning(new string[] { sKeyFileError, KPRes.MasterKeyChangeInfo});
+          bFileError = true;
+        }
       }
       if (!string.IsNullOrEmpty(quOldKey.CustomKeyProviderName))
       {
@@ -154,8 +173,62 @@ namespace LockAssist
       }
       KeePass.Program.Config.Defaults.SetKeySources(ioConnection, ck);
       lMsg.Add("Set database key sources");
-      if (bRestoreSuccess) PluginDebug.AddSuccess("Restore old masterkey", 0, lMsg.ToArray());
+      if (bRestoreSuccess && !bFileError) PluginDebug.AddSuccess("Restore old masterkey", 0, lMsg.ToArray());
+      else if (bRestoreSuccess && bFileError) PluginDebug.AddWarning("Restore old masterkey", 0, lMsg.ToArray());
       else PluginDebug.AddError("Restore old masterkey", 0, lMsg.ToArray());
+      if (bFileError) ShowChangeMasterKeyForm(db);
+    }
+
+    private static MethodInfo m_miChangeMasterKey = null;
+    private static void ShowChangeMasterKeyForm(PwDatabase db)
+    {
+      if (m_miChangeMasterKey == null)
+      {
+        m_miChangeMasterKey = KeePass.Program.MainForm.GetType().GetMethod("ChangeMasterKey", BindingFlags.Instance | BindingFlags.NonPublic);
+      }
+      if (m_miChangeMasterKey != null) m_miChangeMasterKey.Invoke(KeePass.Program.MainForm, new object[] { db });
+    }
+
+    private static KcpKeyFile RestoreKeyFile(QuickUnlockOldKeyInfo quOldKey, List<string> lErrors, out bool bFileError)
+    {
+      bFileError = false;
+      KcpKeyFile kf = RestoreKeyFileFromBuffer(quOldKey, lErrors);
+      if (kf != null) return kf;
+      try
+      {
+        return new KcpKeyFile(quOldKey.keyFile);
+      }
+      catch (Exception ex) { lErrors.Add("Access to key file not possible: " + ex.Message); }
+      bFileError = true;
+      return null;
+    }
+
+    private static KcpKeyFile m_kcpKeyFileHelp = null;
+    private static KcpKeyFile RestoreKeyFileFromBuffer(QuickUnlockOldKeyInfo quOldKey, List<string> lErrors)
+    {
+      if (m_kcpKeyFileHelp == null)
+      {
+        string strFile = Path.GetTempFileName();
+        File.WriteAllText(strFile, Guid.NewGuid().ToString());
+        m_kcpKeyFileHelp = new KcpKeyFile(strFile);
+        File.Delete(strFile);
+      }
+
+      var fi = m_kcpKeyFileHelp.GetType().GetField("m_pbKeyData", BindingFlags.Instance | BindingFlags.NonPublic);
+      if (fi == null)
+      {
+        lErrors.Add("Can't restore m_pbKeyData");
+        return null;
+      }
+      fi.SetValue(m_kcpKeyFileHelp, quOldKey.pbKeyFile);
+      fi = m_kcpKeyFileHelp.GetType().GetField("m_strPath", BindingFlags.Instance | BindingFlags.NonPublic);
+      if (fi == null)
+      {
+        lErrors.Add("Can't restore m_strPath");
+        return null;
+      }
+      fi.SetValue(m_kcpKeyFileHelp, quOldKey.keyFile);
+      return m_kcpKeyFileHelp;
     }
 
     internal static void RestoreOldMasterKey(PwDatabase db, QuickUnlockOldKeyInfo quOldKey)
@@ -222,7 +295,10 @@ namespace LockAssist
         quOldKey.pwHash = EncryptKey(QuickUnlockKey, pbPasswordSerialized);
       }
       if (db.MasterKey.ContainsType(typeof(KcpKeyFile)))
+      {
         quOldKey.keyFile = (db.MasterKey.GetUserKey(typeof(KcpKeyFile)) as KcpKeyFile).Path;
+        quOldKey.pbKeyFile = (db.MasterKey.GetUserKey(typeof(KcpKeyFile)) as KcpKeyFile).KeyData;
+      }
       if (db.MasterKey.ContainsType(typeof(KcpCustomKey)))
       {
         quOldKey.CustomKeyProviderName = (db.MasterKey.GetUserKey(typeof(KcpCustomKey)) as KcpCustomKey).Name;

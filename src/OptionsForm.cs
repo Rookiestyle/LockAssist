@@ -61,7 +61,6 @@ namespace LockAssist
       cbSLValidityInterval.SelectedIndex = 0;
 
       lQUAttempts.Text = PluginTranslate.OptionsQUSettingsPerDB_UnlockAttempts;
-      lQUAttempts.Left = nQUAttempts.Left - 10 - lQUAttempts.Width;
       cbPINDBSpecific_CheckedChanged(null, null);
       nQUAttempts.Maximum = Program.Config.Security.MasterKeyTries;
     }
@@ -255,6 +254,12 @@ namespace LockAssist
     {
       lQUAttempts.Enabled = cbPINDBSpecific.Checked;
       nQUAttempts.Enabled = cbPINDBSpecific.Checked;
+      if (cbPINDBSpecific.Checked && nQUAttempts.Tag != null) nQUAttempts.Value = (int)nQUAttempts.Tag;
+      else
+      {
+        nQUAttempts.Tag = (int)nQUAttempts.Value;
+        nQUAttempts.Value = 1;
+      }
     }
   }
 }

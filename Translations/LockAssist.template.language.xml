@@ -56,7 +56,7 @@ Please edit and set Quick Unlock PIN as password</value>
   </item>
   <item>
     <key>OptionsQUSettingsPerDB_UnlockAttempts</key>
-    <value>Quick Unlock Attempts:</value>
+    <value>Quick Unlock Attempts (requires DB specific settings):</value>
   </item>
   <item>
     <key>OptionsSwitchDBToGeneral</key>

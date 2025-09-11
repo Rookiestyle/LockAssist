@@ -90,9 +90,9 @@ Please edit and set Quick Unlock PIN as password";
     /// </summary>
     public static readonly string OptionsQUSettingsPerDB = @"Settings are DB specific";
     /// <summary>
-    /// Quick Unlock Attempts:
+    /// Quick Unlock Attempts (requires DB specific settings):
     /// </summary>
-    public static readonly string OptionsQUSettingsPerDB_UnlockAttempts = @"Quick Unlock Attempts:";
+    public static readonly string OptionsQUSettingsPerDB_UnlockAttempts = @"Quick Unlock Attempts (requires DB specific settings):";
     /// <summary>
     /// Database specific settings switched off.
     /// 

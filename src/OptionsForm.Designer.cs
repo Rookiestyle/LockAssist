@@ -33,6 +33,8 @@
             this.tabQuickUnlock = new System.Windows.Forms.TabPage();
             this.tbModeExplain = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.lQUAttempts = new System.Windows.Forms.Label();
+            this.nQUAttempts = new System.Windows.Forms.NumericUpDown();
             this.cbPINDBSpecific = new System.Windows.Forms.CheckBox();
             this.cbQUValidity = new System.Windows.Forms.ComboBox();
             this.nQUValidity = new System.Windows.Forms.NumericUpDown();
@@ -59,11 +61,10 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.cbLockWorkspace = new System.Windows.Forms.CheckBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.nQUAttempts = new System.Windows.Forms.NumericUpDown();
-            this.lQUAttempts = new System.Windows.Forms.Label();
             this.tcLockAssistOptions.SuspendLayout();
             this.tabQuickUnlock.SuspendLayout();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nQUAttempts)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nQUValidity)).BeginInit();
             this.tabSoftLock.SuspendLayout();
             this.pSL.SuspendLayout();
@@ -71,7 +72,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.nSLSeconds)).BeginInit();
             this.tabLockWorkspace.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nQUAttempts)).BeginInit();
             this.SuspendLayout();
             // 
             // tcLockAssistOptions
@@ -105,12 +105,12 @@
             // 
             this.tbModeExplain.Dock = System.Windows.Forms.DockStyle.Top;
             this.tbModeExplain.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.tbModeExplain.Location = new System.Drawing.Point(2, 210);
+            this.tbModeExplain.Location = new System.Drawing.Point(2, 237);
             this.tbModeExplain.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.tbModeExplain.Multiline = true;
             this.tbModeExplain.Name = "tbModeExplain";
             this.tbModeExplain.ReadOnly = true;
-            this.tbModeExplain.Size = new System.Drawing.Size(414, 94);
+            this.tbModeExplain.Size = new System.Drawing.Size(414, 89);
             this.tbModeExplain.TabIndex = 110;
             this.tbModeExplain.TabStop = false;
             this.tbModeExplain.Text = "Requirements for mode \'Database password\'\r\n - Database masterkey contains a passw" +
@@ -136,13 +136,49 @@
             this.panel2.Location = new System.Drawing.Point(2, 3);
             this.panel2.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(414, 207);
+            this.panel2.Size = new System.Drawing.Size(414, 234);
             this.panel2.TabIndex = 35;
+            // 
+            // lQUAttempts
+            // 
+            this.lQUAttempts.AutoSize = true;
+            this.lQUAttempts.Location = new System.Drawing.Point(4, 175);
+            this.lQUAttempts.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lQUAttempts.Name = "lQUAttempts";
+            this.lQUAttempts.Size = new System.Drawing.Size(17, 16);
+            this.lQUAttempts.TabIndex = 111;
+            this.lQUAttempts.Text = "?:";
+            this.lQUAttempts.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // nQUAttempts
+            // 
+            this.nQUAttempts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.nQUAttempts.Location = new System.Drawing.Point(339, 173);
+            this.nQUAttempts.Margin = new System.Windows.Forms.Padding(2);
+            this.nQUAttempts.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.nQUAttempts.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nQUAttempts.Name = "nQUAttempts";
+            this.nQUAttempts.Size = new System.Drawing.Size(71, 22);
+            this.nQUAttempts.TabIndex = 110;
+            this.nQUAttempts.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // cbPINDBSpecific
             // 
+            this.cbPINDBSpecific.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbPINDBSpecific.AutoSize = true;
-            this.cbPINDBSpecific.Location = new System.Drawing.Point(7, 174);
+            this.cbPINDBSpecific.Location = new System.Drawing.Point(239, 9);
             this.cbPINDBSpecific.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.cbPINDBSpecific.Name = "cbPINDBSpecific";
             this.cbPINDBSpecific.Size = new System.Drawing.Size(171, 20);
@@ -158,7 +194,7 @@
             this.cbQUValidity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbQUValidity.FormattingEnabled = true;
             this.cbQUValidity.Location = new System.Drawing.Point(180, 143);
-            this.cbQUValidity.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cbQUValidity.Margin = new System.Windows.Forms.Padding(2);
             this.cbQUValidity.Name = "cbQUValidity";
             this.cbQUValidity.Size = new System.Drawing.Size(230, 24);
             this.cbQUValidity.TabIndex = 108;
@@ -168,7 +204,7 @@
             this.nQUValidity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.nQUValidity.DecimalPlaces = 2;
             this.nQUValidity.Location = new System.Drawing.Point(96, 142);
-            this.nQUValidity.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.nQUValidity.Margin = new System.Windows.Forms.Padding(2);
             this.nQUValidity.Maximum = new decimal(new int[] {
             999,
             0,
@@ -182,7 +218,7 @@
             // 
             this.cbQUValidityActive.AutoSize = true;
             this.cbQUValidityActive.Location = new System.Drawing.Point(7, 143);
-            this.cbQUValidityActive.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cbQUValidityActive.Margin = new System.Windows.Forms.Padding(2);
             this.cbQUValidityActive.Name = "cbQUValidityActive";
             this.cbQUValidityActive.Size = new System.Drawing.Size(76, 20);
             this.cbQUValidityActive.TabIndex = 106;
@@ -281,9 +317,9 @@
             this.tabSoftLock.Controls.Add(this.tbSoftLockDesc);
             this.tabSoftLock.Controls.Add(this.pSL);
             this.tabSoftLock.Location = new System.Drawing.Point(4, 25);
-            this.tabSoftLock.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabSoftLock.Margin = new System.Windows.Forms.Padding(2);
             this.tabSoftLock.Name = "tabSoftLock";
-            this.tabSoftLock.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabSoftLock.Padding = new System.Windows.Forms.Padding(2);
             this.tabSoftLock.Size = new System.Drawing.Size(418, 331);
             this.tabSoftLock.TabIndex = 1;
             this.tabSoftLock.Text = "Softlock";
@@ -293,7 +329,7 @@
             // 
             this.tbSoftLockDesc.Dock = System.Windows.Forms.DockStyle.Top;
             this.tbSoftLockDesc.Location = new System.Drawing.Point(2, 103);
-            this.tbSoftLockDesc.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tbSoftLockDesc.Margin = new System.Windows.Forms.Padding(2);
             this.tbSoftLockDesc.Multiline = true;
             this.tbSoftLockDesc.Name = "tbSoftLockDesc";
             this.tbSoftLockDesc.ReadOnly = true;
@@ -311,7 +347,7 @@
             this.pSL.Controls.Add(this.cbSLActive);
             this.pSL.Dock = System.Windows.Forms.DockStyle.Top;
             this.pSL.Location = new System.Drawing.Point(2, 2);
-            this.pSL.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pSL.Margin = new System.Windows.Forms.Padding(2);
             this.pSL.Name = "pSL";
             this.pSL.Size = new System.Drawing.Size(414, 101);
             this.pSL.TabIndex = 1;
@@ -322,7 +358,7 @@
             this.cbSLValidityInterval.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbSLValidityInterval.FormattingEnabled = true;
             this.cbSLValidityInterval.Location = new System.Drawing.Point(178, 66);
-            this.cbSLValidityInterval.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cbSLValidityInterval.Margin = new System.Windows.Forms.Padding(2);
             this.cbSLValidityInterval.Name = "cbSLValidityInterval";
             this.cbSLValidityInterval.Size = new System.Drawing.Size(230, 24);
             this.cbSLValidityInterval.TabIndex = 207;
@@ -332,7 +368,7 @@
             this.nSLValiditySeconds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.nSLValiditySeconds.DecimalPlaces = 2;
             this.nSLValiditySeconds.Location = new System.Drawing.Point(112, 66);
-            this.nSLValiditySeconds.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.nSLValiditySeconds.Margin = new System.Windows.Forms.Padding(2);
             this.nSLValiditySeconds.Maximum = new decimal(new int[] {
             999,
             0,
@@ -346,7 +382,7 @@
             // 
             this.cbSLValidityActive.AutoSize = true;
             this.cbSLValidityActive.Location = new System.Drawing.Point(7, 67);
-            this.cbSLValidityActive.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cbSLValidityActive.Margin = new System.Windows.Forms.Padding(2);
             this.cbSLValidityActive.Name = "cbSLValidityActive";
             this.cbSLValidityActive.Size = new System.Drawing.Size(142, 20);
             this.cbSLValidityActive.TabIndex = 205;
@@ -359,7 +395,7 @@
             this.cbSLInterval.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbSLInterval.FormattingEnabled = true;
             this.cbSLInterval.Location = new System.Drawing.Point(178, 7);
-            this.cbSLInterval.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cbSLInterval.Margin = new System.Windows.Forms.Padding(2);
             this.cbSLInterval.Name = "cbSLInterval";
             this.cbSLInterval.Size = new System.Drawing.Size(230, 24);
             this.cbSLInterval.TabIndex = 203;
@@ -368,7 +404,7 @@
             // 
             this.cbSLOnMinimize.AutoSize = true;
             this.cbSLOnMinimize.Location = new System.Drawing.Point(7, 37);
-            this.cbSLOnMinimize.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cbSLOnMinimize.Margin = new System.Windows.Forms.Padding(2);
             this.cbSLOnMinimize.Name = "cbSLOnMinimize";
             this.cbSLOnMinimize.Size = new System.Drawing.Size(129, 20);
             this.cbSLOnMinimize.TabIndex = 204;
@@ -380,7 +416,7 @@
             this.nSLSeconds.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.nSLSeconds.DecimalPlaces = 2;
             this.nSLSeconds.Location = new System.Drawing.Point(112, 7);
-            this.nSLSeconds.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.nSLSeconds.Margin = new System.Windows.Forms.Padding(2);
             this.nSLSeconds.Maximum = new decimal(new int[] {
             999,
             0,
@@ -394,7 +430,7 @@
             // 
             this.cbSLActive.AutoSize = true;
             this.cbSLActive.Location = new System.Drawing.Point(7, 9);
-            this.cbSLActive.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cbSLActive.Margin = new System.Windows.Forms.Padding(2);
             this.cbSLActive.Name = "cbSLActive";
             this.cbSLActive.Size = new System.Drawing.Size(97, 20);
             this.cbSLActive.TabIndex = 201;
@@ -419,7 +455,7 @@
             // 
             this.tbLockWorkspace.Dock = System.Windows.Forms.DockStyle.Top;
             this.tbLockWorkspace.Location = new System.Drawing.Point(2, 48);
-            this.tbLockWorkspace.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tbLockWorkspace.Margin = new System.Windows.Forms.Padding(2);
             this.tbLockWorkspace.Multiline = true;
             this.tbLockWorkspace.Name = "tbLockWorkspace";
             this.tbLockWorkspace.ReadOnly = true;
@@ -454,42 +490,6 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // nQUAttempts
-            // 
-            this.nQUAttempts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.nQUAttempts.Location = new System.Drawing.Point(339, 173);
-            this.nQUAttempts.Margin = new System.Windows.Forms.Padding(2);
-            this.nQUAttempts.Maximum = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.nQUAttempts.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nQUAttempts.Name = "nQUAttempts";
-            this.nQUAttempts.Size = new System.Drawing.Size(71, 22);
-            this.nQUAttempts.TabIndex = 110;
-            this.nQUAttempts.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // lQUAttempts
-            // 
-            this.lQUAttempts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lQUAttempts.AutoSize = true;
-            this.lQUAttempts.Location = new System.Drawing.Point(272, 175);
-            this.lQUAttempts.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lQUAttempts.Name = "lQUAttempts";
-            this.lQUAttempts.Size = new System.Drawing.Size(17, 16);
-            this.lQUAttempts.TabIndex = 111;
-            this.lQUAttempts.Text = "?:";
-            this.lQUAttempts.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -505,6 +505,7 @@
             this.tabQuickUnlock.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nQUAttempts)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nQUValidity)).EndInit();
             this.tabSoftLock.ResumeLayout(false);
             this.tabSoftLock.PerformLayout();
@@ -516,7 +517,6 @@
             this.tabLockWorkspace.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nQUAttempts)).EndInit();
             this.ResumeLayout(false);
 
 		}

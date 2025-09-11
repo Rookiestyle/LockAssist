@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using KeePassLib.Security;
 using PluginTools;
@@ -46,6 +47,18 @@ namespace LockAssist
     private void cbContinueUnlock_CheckedChanged(object sender, System.EventArgs e)
     {
       LockWorkspace.SetContinueUnlock(cbContinueUnlock.Checked);
+    }
+
+    internal void SetAttempts(int iMaxFailed, int iAttempt)
+    {
+      if (iMaxFailed == 1) return;
+      var bEndsWithColon = lLabel.Text.EndsWith(":");
+      if (bEndsWithColon)
+      {
+        lLabel.Text = lLabel.Text.Substring(0, lLabel.Text.Length - 1);
+      }
+      lLabel.Text += " (" + iAttempt.ToString() + "/" + iMaxFailed.ToString() + ")";
+      if (bEndsWithColon) lLabel.Text += ":";
     }
   }
 }
