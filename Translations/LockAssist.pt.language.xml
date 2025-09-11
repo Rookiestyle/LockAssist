@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Translation>
-	2
-  <TranslationVersion>4</TranslationVersion>
+<Translation>  <!-- 
+    Increment the TranslationVersion every time the translation file is updated
+	Also update the version.info file
+  -->
+  <TranslationVersion>5</TranslationVersion>
   <item>
     <key>FirstTimeInfo</key>
     <value>Desbloqueio Rápido (Quick Unlock) oferece dois modos de operação.
