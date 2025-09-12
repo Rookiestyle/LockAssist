@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Translation>
-  <!-- 
+<Translation>  <!-- 
     Increment the TranslationVersion every time the translation file is updated
 	Also update the version.info file
   -->
-  <TranslationVersion>4</TranslationVersion>
+  <TranslationVersion>5</TranslationVersion>
   <item>
     <key>FirstTimeInfo</key>
     <value>Desbloqueio Rápido (Quick Unlock) oferece dois modos de operação.
@@ -53,6 +52,10 @@ Por favor, edite e defina o PIN de desbloqueio rápido como senha</value>
   <item>
     <key>OptionsQUSettingsPerDB</key>
     <value>Configurações são específicas por BD</value>
+	  </item>
+  <item>
+    <key>OptionsQUSettingsPerDB_UnlockAttempts</key>
+    <value>Tentativas de Desbloqueio Rápido (requer configurações específicas do banco de dados):</value>
   </item>
   <item>
     <key>OptionsSwitchDBToGeneral</key>
@@ -71,7 +74,7 @@ Clique '{1}' para tornar as configurações deste banco de dados as novas config
   </item>
   <item>
     <key>UnlockLabel</key>
-    <value>PIN de Desbloqueio Rápido:</value>
+    <value>PIN do Desbloqueio Rápido:</value>
   </item>
   <item>
     <key>OptionsQUEntryCreate</key>
@@ -81,7 +84,7 @@ Criar agora?</value>
   </item>
   <item>
     <key>KeyProvNoCreate</key>
-    <value>Este provedor chave não pode ser usado para criar chaves.</value>
+    <value>Este provedor chaves não pode ser usado para criar chaves.</value>
   </item>
   <item>
     <key>OptionsQUInfoRememberPassword</key>
