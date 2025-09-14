@@ -4,7 +4,7 @@
     Increment the TranslationVersion every time the translation file is updated
 	Also update the version.info file
   -->
-  <TranslationVersion>5</TranslationVersion>
+  <TranslationVersion>6</TranslationVersion>
   <item>
     <key>FirstTimeInfo</key>
     <value>快速解锁（Quick Unlock）提供两种操作模式。请选择您偏好的方式进行操作。</value>
