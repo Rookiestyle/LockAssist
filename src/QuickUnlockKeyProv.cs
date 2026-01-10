@@ -138,6 +138,9 @@ namespace LockAssist
       bool bFileError = false;
       if (!string.IsNullOrEmpty(quOldKey.keyFile))
       {
+        lMsg.Add("Trying to add key file");
+        lMsg.Add(db.IOConnectionInfo.Path);
+        lMsg.Add(quOldKey.keyFile);
         var kfRestored = RestoreKeyFile(quOldKey, lMsg, out bFileError);
         if (kfRestored != null)
         {
@@ -172,6 +175,15 @@ namespace LockAssist
         lMsg.Add("Set masterkey for database");
       }
       KeePass.Program.Config.Defaults.SetKeySources(ioConnection, ck);
+      if (!string.IsNullOrEmpty(quOldKey.keyFile))
+      {
+        var ksActual = KeePass.Program.Config.Defaults.GetKeySources(ioConnection);
+        if (quOldKey.keyFile != ksActual.KeyFilePath)
+        {
+          lMsg.Add("Key file does not match: " + quOldKey.keyFile + " / " + 
+            (string.IsNullOrEmpty(ksActual.KeyFilePath) ? "<empty>" : ksActual.KeyFilePath));
+        }
+      }
       lMsg.Add("Set database key sources");
       if (bRestoreSuccess && !bFileError) PluginDebug.AddSuccess("Restore old masterkey", 0, lMsg.ToArray());
       else if (bRestoreSuccess && bFileError) PluginDebug.AddWarning("Restore old masterkey", 0, lMsg.ToArray());
@@ -193,7 +205,11 @@ namespace LockAssist
     {
       bFileError = false;
       KcpKeyFile kf = RestoreKeyFileFromBuffer(quOldKey, lErrors);
-      if (kf != null) return kf;
+      if (kf != null)
+      {
+        lErrors.Add("Key file restored from buffer");
+        return kf;
+      }
       try
       {
         return new KcpKeyFile(quOldKey.keyFile);

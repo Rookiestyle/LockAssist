@@ -20,10 +20,10 @@ namespace LockAssist
     private Dictionary<Component, EventHandlerList> m_EventHandlerList = new Dictionary<Component, EventHandlerList>();
     private Dictionary<Component, EventHandlers> m_EventHandlers = new Dictionary<Component, EventHandlers>();
     private static MethodInfo miIsCommandTypeInvokable = null;
-    private static MethodInfo miRestoreWindowState = null;
-    private MethodInfo miUpdateUIState = null;
+    //private static MethodInfo miRestoreWindowState = null;
+    //private MethodInfo miUpdateUIState = null;
     private static MethodInfo miCloseDocument = null;
-    private MethodInfo miGetDocuments = null;
+    //private MethodInfo miGetDocuments = null;
     private static MethodInfo miOnFileLock = null;
     private ToolStripButton m_tsbLockWorkspace = null;
     private ToolStripMenuItem m_tsmiLockWorkspace = null;
@@ -59,30 +59,36 @@ namespace LockAssist
         error = true;
         Tools.ShowError("Could not find method IsCommandTypeInvokable");
       }
+      /*
       miRestoreWindowState = GetMethod(_mf, "RestoreWindowState", new Type[] { typeof(PwDatabase) });
       if (miRestoreWindowState == null)
       {
         error = true;
         Tools.ShowError("Could not find method RestoreWindowState");
       }
+      */
+      /*
       miUpdateUIState = GetMethod(_mf, "UpdateUIState", new Type[] { typeof(bool) });
       if (miUpdateUIState == null)
       {
         error = true;
         Tools.ShowError("Could not find method UpdateUIState");
       }
+      */
       miCloseDocument = GetMethod(_mf, "CloseDocument", new Type[] { typeof(PwDocument), typeof(bool), typeof(bool), typeof(bool), typeof(bool) });
       if (miCloseDocument == null)
       {
         error = true;
         Tools.ShowError("Could not find method CloseDocument");
       }
+      /*
       miGetDocuments = GetMethod(_mf.DocumentManager, "GetDocuments", new Type[] { typeof(int) });
       if (miGetDocuments == null)
       {
         error = true;
         Tools.ShowError("Could not find method GetDocuments");
       }
+      */
       miOnFileLock = GetMethod(_mf, "OnFileLock");
       if (miOnFileLock == null)
       {
@@ -254,7 +260,7 @@ namespace LockAssist
           if (pd.IsOpen)
           {
             d.LockedIoc = new IOConnectionInfo(); // Clear lock
-            miRestoreWindowState.Invoke(_mf, new object[] { pd });
+            _mf.MakeDocumentActive(d);
           }
           if (m_Terminated || !m_bContinueUnlock) break;
         }
