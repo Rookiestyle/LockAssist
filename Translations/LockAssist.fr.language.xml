@@ -1,0 +1,180 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<Translation>
+	<!-- 
+    Increment the TranslationVersion every time the translation file is updated
+	Also update the version.info file
+  -->
+	<TranslationVersion>1</TranslationVersion>
+	<item>
+		<key>FirstTimeInfo</key>
+		<value>
+			Déverrouillage Rapide propose deux modes.
+			Choisissez celui qui vous convient.
+		</value>
+	</item>
+	<item>
+		<key>OptionsQUMode</key>
+		<value>Mode:</value>
+	</item>
+	<item>
+		<key>Active</key>
+		<value>Déverrouillage Rapide activé</value>
+	</item>
+	<item>
+		<key>KeyProvNoQuickUnlock</key>
+		<value>
+			Aucune clé Déverrouillage Rapide n'a été trouvée.
+
+			Déverrouillage Rapide n'est pas possible.
+		</value>
+	</item>
+	<item>
+		<key>OptionsQUReqInfoDB</key>
+		<value>
+			Prérequis pour le mode 'mot de passe de la base de données':
+			- La clé maître de la base de données contient un mot de passe
+			- L'option 'Mémoriser le mot de passe maître' est activée
+
+			Une entrée Déverrouillage Rapide existante sera utilisée en solution de repli.
+		</value>
+	</item>
+	<item>
+		<key>OptionsQUSettings</key>
+		<value>Déverrouillage Rapide</value>
+	</item>
+	<item>
+		<key>OptionsQUModeEntry</key>
+		<value>Entrée Déverrouillage Rapide uniquement</value>
+	</item>
+	<item>
+		<key>OptionsQUModeDatabasePW</key>
+		<value>Mot de passe de la base de données</value>
+	</item>
+	<item>
+		<key>OptionsQUEntryCreated</key>
+		<value>
+			Entrée Déverrouillage Rapide créée.
+
+			Veuillez modifier et définir le NIP de Déverrouillage Rapide comme mot de passe.
+		</value>
+	</item>
+	<item>
+		<key>OptionsQUSettingsPerDB</key>
+		<value>Paramètres spécifiques à la base de données</value>
+	</item>
+	<item>
+		<key>OptionsQUSettingsPerDB_UnlockAttempts</key>
+		<value>Tentatives de Déverrouillage Rapide (nécessite des paramètres spécifiques à la base de données):</value>
+	</item>
+	<item>
+		<key>OptionsSwitchDBToGeneral</key>
+		<value>
+			Les paramètres spécifiques à la base de données ont été désactivés.
+
+			Cliquez sur « {0} » pour utiliser les paramètres globaux pour cette base de données.
+			Cliquez sur « {1} » pour définir les paramètres de cette base de données comme nouveaux paramètres globaux.
+		</value>
+	</item>
+	<item>
+		<key>OptionsQUPINLength</key>
+		<value>Longueur du NIP:</value>
+	</item>
+	<item>
+		<key>ButtonUnlock</key>
+		<value>OK</value>
+	</item>
+	<item>
+		<key>UnlockLabel</key>
+		<value>NIP:</value>
+	</item>
+	<item>
+		<key>OptionsQUEntryCreate</key>
+		<value>
+			L'entrée Déverrouillage Rapide n'a pas été trouvée.
+
+			La créer maintenant ?
+		</value>
+	</item>
+	<item>
+		<key>KeyProvNoCreate</key>
+		<value>Ce fournisseur de clé ne peut pas être utilisé pour créer des clés.</value>
+	</item>
+	<item>
+		<key>OptionsQUInfoRememberPassword</key>
+		<value>
+			L'option 'Mémoriser le mot de passe maître' doit être activée dans Options -&gt; Sécurité.
+			N'oubliez pas d'activer ce paramètre.
+		</value>
+	</item>
+	<item>
+		<key>OptionsQUUseLast</key>
+		<value>Utiliser les {0} derniers caractères comme NIP</value>
+	</item>
+	<item>
+		<key>OptionsQUUseFirst</key>
+		<value>Utiliser les {0} premiers caractères comme NIP</value>
+	</item>
+	<item>
+		<key>WrongPIN</key>
+		<value>
+			Le NIP saisi est incorrect.
+
+			La base de données reste verrouillée et ne peut être déverrouillée qu'avec la clé maître originale.
+		</value>
+	</item>
+	<item>
+		<key>Hours</key>
+		<value>Heures</value>
+	</item>
+	<item>
+		<key>Minutes</key>
+		<value>Minutes</value>
+	</item>
+	<item>
+		<key>Seconds</key>
+		<value>Secondes</value>
+	</item>
+	<item>
+		<key>OptionsLockWorkspace</key>
+		<value>Global '{0} / {1}'</value>
+	</item>
+	<item>
+		<key>OptionsLockWorkspaceDesc</key>
+		<value>
+			Cette option modifie le comportement de '{0} / {1}', autant pour l'entrée de menu que pour le bouton de la barre d'outils.
+
+			Lorsqu'elle est activée, TOUTES les bases de données chargées sont verrouillées / déverrouillées en utilisant ces commandes.
+			Dans ce cas, l'état du document actif détermine si un verrouillage global ou un déverrouillage global est effectué.
+
+			Si la touche [Maj] est maintenue enfoncée lors de l'utilisation de ces commandes, seul le document actif est traité.
+		</value>
+	</item>
+	<item>
+		<key>SoftlockModeUnhideForms</key>
+		<value>Mode SoftLock actif. Cliquez sur la fenêtre au premier plan pour le désactiver.</value>
+	</item>
+	<item>
+		<key>SoftlockModeUnhide</key>
+		<value>Mode SoftLock actif. Cliquez pour le désactiver.</value>
+	</item>
+	<item>
+		<key>SoftlockActive</key>
+		<value>Mode SoftLock après inactivité</value>
+	</item>
+	<item>
+		<key>SoftlockOnMinimize</key>
+		<value>Mode SoftLock lors de la minimisation de KeePass</value>
+	</item>
+	<item>
+		<key>SoftlockDesc</key>
+		<value>
+			Le mode SoftLock masque les informations sensibles suivantes, tout en permettant l'auto-saisie ainsi que d'autres intégrations :
+			-Liste des groupes
+			-Liste des entrées
+			-Affichage de l'entrée
+			-Tous les formulaires sauf ceux mentionnés dans la propriété de configuration LockAssist.SoftlockExcludeForms
+
+			Des paramètres valides de Déverrouillage Rapide sont requis, mais le Déverrouillage Rapide lui-même n'a pas besoin d'être activé.
+		</value>
+	</item>
+</Translation>
