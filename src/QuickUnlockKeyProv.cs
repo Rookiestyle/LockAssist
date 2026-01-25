@@ -139,7 +139,7 @@ namespace LockAssist
       if (!string.IsNullOrEmpty(quOldKey.keyFile))
       {
         lMsg.Add("Trying to add key file");
-        lMsg.Add(db.IOConnectionInfo.Path);
+        lMsg.Add(db != null ? db.IOConnectionInfo.Path : "db is closed, no path info abvailable");
         lMsg.Add(quOldKey.keyFile);
         var kfRestored = RestoreKeyFile(quOldKey, lMsg, out bFileError);
         if (kfRestored != null)
@@ -194,6 +194,7 @@ namespace LockAssist
     private static MethodInfo m_miChangeMasterKey = null;
     private static void ShowChangeMasterKeyForm(PwDatabase db)
     {
+      if (db == null) return;
       if (m_miChangeMasterKey == null)
       {
         m_miChangeMasterKey = KeePass.Program.MainForm.GetType().GetMethod("ChangeMasterKey", BindingFlags.Instance | BindingFlags.NonPublic);
