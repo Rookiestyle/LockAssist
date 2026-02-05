@@ -114,81 +114,126 @@ namespace LockAssist
     private static void RestoreOldMasterKeyInternal(PwDatabase db, IOConnectionInfo ioConnection, QuickUnlockOldKeyInfo quOldKey)
     {
       List<string> lMsg = new List<string>();
-      CompositeKey ck = new CompositeKey();
-      bool bRestoreSuccess = true;
-      if (quOldKey.pwHash != null)
+      bool bException = false;
+      try
       {
-        KcpPassword p = null;
-        //Only restore password if the db was actually unlocked using Quick Unlock
-        //This is required so that next time it's locked, we can deduce the Quick Unlock key from the password
+        lMsg.Add("db: " + (db != null).ToString());
+        lMsg.Add("ioConnectionn: " + (ioConnection != null).ToString());
+        lMsg.Add("quOldkey: " + (quOldKey != null).ToString());
+        CompositeKey ck = new CompositeKey();
+        bool bRestoreSuccess = true;
+        if (quOldKey.pwHash != null)
+        {
+          lMsg.Add("pwHash exists");
+          KcpPassword p = null;
+          //Only restore password if the db was actually unlocked using Quick Unlock
+          //This is required so that next time it's locked, we can deduce the Quick Unlock key from the password
+          if (db != null)
+          {
+            p = DeserializePassword(quOldKey.pwHash, KeePass.Program.Config.Security.MasterPassword.RememberWhileOpen);
+          }
+
+          //Check for KeyData AND Password
+          if ((p == null || (p.KeyData == null && p.Password == null)) && quOldKey.HasPassword)
+          {
+            p = new KcpPassword(new byte[0] { }, KeePass.Program.Config.Security.MasterPassword.RememberWhileOpen);
+            lMsg.Add("p.KeyData issue: " + (p == null).ToString());
+            bRestoreSuccess = false;
+          }
+          ck.AddUserKey(p);
+          lMsg.Add("Add password to masterkey: " + (bRestoreSuccess ? "Password decrypted and restored" : "Password restore failed, empty password set"));
+        }
+        else lMsg.Add("pwhash does not exist");
+        bool bFileError = false;
+        if (!string.IsNullOrEmpty(quOldKey.keyFile))
+        {
+          lMsg.Add("Trying to add key file");
+          lMsg.Add(db != null ? db.IOConnectionInfo.Path : "db is closed, no path info abvailable");
+          lMsg.Add(quOldKey.keyFile);
+          var kfRestored = RestoreKeyFile(quOldKey, lMsg, out bFileError);
+          if (kfRestored != null)
+          {
+            ck.AddUserKey(kfRestored);
+            lMsg.Add("Add key file to masterkey");
+          }
+          else
+          {
+            lMsg.Add("Error adding key file to masterkey");
+            string sKeyFileError = KPRes.KeyFileError;
+            if (sKeyFileError.EndsWith(".")) sKeyFileError = sKeyFileError.Substring(0, sKeyFileError.Length - 1);
+            sKeyFileError += ": " + quOldKey.keyFile;
+            MessageService.ShowWarning(new string[] { sKeyFileError, KPRes.MasterKeyChangeInfo });
+            bFileError = true;
+          }
+        }
+        else lMsg.Add("No KeyFile to add");
+        if (!string.IsNullOrEmpty(quOldKey.CustomKeyProviderName))
+        {
+          var ckHashedData = quOldKey.CustomKeyProviderData.ReadData();
+          ck.AddUserKey(new KcpCustomKey(quOldKey.CustomKeyProviderName, ckHashedData, false));
+          MemUtil.ZeroByteArray(ckHashedData);
+          lMsg.Add("Add custom key provider to masterkey: " + quOldKey.CustomKeyProviderName);
+        }
+        if (quOldKey.account)
+        {
+          ck.AddUserKey(new KcpUserAccount());
+          lMsg.Add("Add user account to masterkey");
+        }
+        else lMsg.Add("user account not part of key");
         if (db != null)
         {
-          p = DeserializePassword(quOldKey.pwHash, KeePass.Program.Config.Security.MasterPassword.RememberWhileOpen);
+          db.MasterKey = ck;
+          lMsg.Add("Set masterkey for database");
         }
-
-        //Check for KeyData AND Password
-        if ((p == null || (p.KeyData == null && p.Password == null)) && quOldKey.HasPassword)
+        else lMsg.Add("db is null, key not added");
+        KeePass.Program.Config.Defaults.SetKeySources(ioConnection, ck);
+        if (!string.IsNullOrEmpty(quOldKey.keyFile))
         {
-          p = new KcpPassword(new byte[0] { }, KeePass.Program.Config.Security.MasterPassword.RememberWhileOpen);
-          bRestoreSuccess = false;
+          if (KeePass.Program.Config.Defaults.RememberKeySources)
+          {
+            var ksActual = KeePass.Program.Config.Defaults.GetKeySources(ioConnection);
+            if (ksActual != null)
+            { if (quOldKey.keyFile != ksActual.KeyFilePath)
+              {
+                lMsg.Add("Key file does not match: " + quOldKey.keyFile + " / " +
+                  (string.IsNullOrEmpty(ksActual.KeyFilePath) ? "<empty>" : ksActual.KeyFilePath));
+              }
+            }
+            else { lMsg.Add("Could not verify if restoring key sources worked"); }
+          }
+          else { lMsg.Add("RememberKeySources is disabled, key file could not be added"); }
         }
-        ck.AddUserKey(p);
-        lMsg.Add("Add password to masterkey: " + (bRestoreSuccess ? "Password decrypted and restored" : "Password restore failed, empty password set"));
-      }
-      bool bFileError = false;
-      if (!string.IsNullOrEmpty(quOldKey.keyFile))
-      {
-        lMsg.Add("Trying to add key file");
-        lMsg.Add(db != null ? db.IOConnectionInfo.Path : "db is closed, no path info abvailable");
-        lMsg.Add(quOldKey.keyFile);
-        var kfRestored = RestoreKeyFile(quOldKey, lMsg, out bFileError);
-        if (kfRestored != null)
+        lMsg.Add("Set database key sources");
+        if (bRestoreSuccess && !bFileError) PluginDebug.AddSuccess("Restore old masterkey", 0, lMsg.ToArray());
+        else if (bRestoreSuccess && bFileError) PluginDebug.AddWarning("Restore old masterkey", 0, lMsg.ToArray());
+        else PluginDebug.AddError("Restore old masterkey", 0, lMsg.ToArray());
+        if (bFileError)
         {
-          ck.AddUserKey(kfRestored);
-          lMsg.Add("Add key file to masterkey");
+          lMsg.Add("ShowChangeMasterKeyForm");
+          ShowChangeMasterKeyForm(db);
         }
-        else
+      }
+      catch (Exception ex)
+      {
+        bException = true;
+        lMsg.Add("Exception occoured");
+        lMsg.Add(ex.Message);
+        lMsg.Add(ex.Source);
+        lMsg.Add(ex.StackTrace);
+        if (ex.InnerException != null) {
+          lMsg.Add(ex.InnerException.Message);
+          lMsg.Add(ex.InnerException.Source);
+          lMsg.Add(ex.InnerException.StackTrace);
+        }
+      }
+      finally 
+      {
+        if (bException)
         {
-          lMsg.Add("Error adding key file to masterkey");
-          string sKeyFileError = KPRes.KeyFileError;
-          if (sKeyFileError.EndsWith(".")) sKeyFileError = sKeyFileError.Substring(0, sKeyFileError.Length - 1);
-          sKeyFileError += ": " + quOldKey.keyFile;
-          MessageService.ShowWarning(new string[] { sKeyFileError, KPRes.MasterKeyChangeInfo});
-          bFileError = true;
+          PluginDebug.AddError("Exception in RestoreOldMasterkeyInternal", 100, lMsg.ToArray());
         }
+        else PluginDebug.AddSuccess("NO exception in RestoreOldMasterkeyInternal", 100, lMsg.ToArray());
       }
-      if (!string.IsNullOrEmpty(quOldKey.CustomKeyProviderName))
-      {
-        var ckHashedData = quOldKey.CustomKeyProviderData.ReadData();
-        ck.AddUserKey(new KcpCustomKey(quOldKey.CustomKeyProviderName, ckHashedData, false));
-        MemUtil.ZeroByteArray(ckHashedData);
-        lMsg.Add("Add custom key provider to masterkey: " + quOldKey.CustomKeyProviderName);
-      }
-      if (quOldKey.account)
-      {
-        ck.AddUserKey(new KcpUserAccount());
-        lMsg.Add("Add user account to masterkey");
-      }
-      if (db != null)
-      {
-        db.MasterKey = ck;
-        lMsg.Add("Set masterkey for database");
-      }
-      KeePass.Program.Config.Defaults.SetKeySources(ioConnection, ck);
-      if (!string.IsNullOrEmpty(quOldKey.keyFile))
-      {
-        var ksActual = KeePass.Program.Config.Defaults.GetKeySources(ioConnection);
-        if (quOldKey.keyFile != ksActual.KeyFilePath)
-        {
-          lMsg.Add("Key file does not match: " + quOldKey.keyFile + " / " + 
-            (string.IsNullOrEmpty(ksActual.KeyFilePath) ? "<empty>" : ksActual.KeyFilePath));
-        }
-      }
-      lMsg.Add("Set database key sources");
-      if (bRestoreSuccess && !bFileError) PluginDebug.AddSuccess("Restore old masterkey", 0, lMsg.ToArray());
-      else if (bRestoreSuccess && bFileError) PluginDebug.AddWarning("Restore old masterkey", 0, lMsg.ToArray());
-      else PluginDebug.AddError("Restore old masterkey", 0, lMsg.ToArray());
-      if (bFileError) ShowChangeMasterKeyForm(db);
     }
 
     private static MethodInfo m_miChangeMasterKey = null;
