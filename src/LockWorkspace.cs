@@ -141,6 +141,7 @@ namespace LockAssist
         c.TabIndex++;
       }
       cbAccount.Parent.Controls.Add(m_cbContinueUnlock);
+      KeeThemeStub.Visit(m_cbContinueUnlock);
     }
 
     internal void Clear()
