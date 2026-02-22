@@ -3,7 +3,7 @@
     Increment the TranslationVersion every time the translation file is updated
 	Also update the version.info file
   -->
-  <TranslationVersion>5</TranslationVersion>
+  <TranslationVersion>6</TranslationVersion>
   <item>
     <key>FirstTimeInfo</key>
     <value>Desbloqueio Rápido (Quick Unlock) oferece dois modos de operação.
@@ -148,7 +148,7 @@ Se a tecla [SHIFT] for pressionada ao usar esses comandos, somente o documento a
   </item>
   <item>
     <key>SoftlockDesc</key>
-    <value>Bloqueio Leve oculta as seguintes informações sensitivas enquanto ainda permite Auto-Type, bem como outra integração:
+    <value>Bloqueio Leve oculta as seguintes informações sensitivas enquanto ainda permite Digitação Automática, bem como outra integração:
 - lista de grupos
 - lista de entradas
 - exibir entrada
