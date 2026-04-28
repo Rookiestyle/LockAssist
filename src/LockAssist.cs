@@ -95,19 +95,47 @@ namespace LockAssist
           if ((f is KeyPromptForm) && LockWorkspace.ShallStopGlobalUnlock())
           {
             PluginDebug.AddInfo("Stop global unlock", 10);
-            GlobalWindowManager.RemoveWindow(f);
-            f.Close();
-            f.Dispose();
             _lw.OnEnhancedWorkspaceLockUnlock(sender, null);
-            e.Form.Shown -= OnKeyFormShown;
+            LockWorkspace.OnKeyFormShown(f, e);
+            var tcClose = new System.Threading.TimerCallback(ft => {
+              PluginDebug.AddInfo("TIMER !!!");
+              try
+              {
+                if (f == null) return;
+                GlobalWindowManager.RemoveWindow(f);
+                if (!f.Disposing && !f.IsDisposed) f.Close();
+                if (!f.Disposing && !f.IsDisposed) f.Dispose();
+              }
+              catch (Exception ex)
+              {
+                PluginDebug.AddError("Close KeyPromptForm: " + ex.Message, 0);
+              }
+            });
+            var t = new System.Threading.Timer(tcClose, f, 500, System.Threading.Timeout.Infinite);
+            
           }
-          LockWorkspace.OnKeyFormShown(f, e);
         }
       }
       for (int i = 0; i < m_dKeeResize.Count; i++)
       {
-        PluginDebug.AddInfo("Calling other GlobalWindowManager.WindowAdded eventhandler", 0, m_dKeeResize[i].Method.Name, m_dKeeResize[i].Target == null ? string.Empty : m_dKeeResize[i].Target.ToString());
-        m_dKeeResize[i].DynamicInvoke(new object[] { sender, e });
+        var lMsg = new List<string>();
+        lMsg.Add(m_dKeeResize[i].Method.Name);
+        lMsg.Add(m_dKeeResize[i].Target == null ? string.Empty : m_dKeeResize[i].Target.ToString());
+        var bError = false;
+        try
+        {
+          m_dKeeResize[i].DynamicInvoke(new object[] { sender, e });
+          lMsg.Add("Success");
+        }
+        catch (Exception ex)
+        {
+          lMsg.Add("Error: " + ex.Message);
+          bError = true;
+        }
+        if (bError)
+          PluginDebug.AddError("Calling other GlobalWindowManager.WindowAdded eventhandler", 0, lMsg.ToArray());
+        else
+          PluginDebug.AddInfo("Calling other GlobalWindowManager.WindowAdded eventhandler", 0, lMsg.ToArray());
       }
     }
 
