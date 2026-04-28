@@ -508,15 +508,24 @@ namespace LockAssist
 
     private static ProtectedBinary EncryptKey(ProtectedString QuickUnlockKey, ProtectedBinary pbKey)
     {
+      // Generate a random 16-byte salt and 12-byte IV for this encryption session
+      byte[] salt = CryptoRandom.Instance.GetRandomBytes(16);
       byte[] iv = CryptoRandom.Instance.GetRandomBytes(12);
-      ChaCha20Cipher cipher = new ChaCha20Cipher(AdjustQuickUnlockKey(QuickUnlockKey), iv);
+      
+      // Derive a secure 256-bit key using the stretched KDF
+      byte[] derivedKey = AdjustQuickUnlockKey(QuickUnlockKey, salt);
+      ChaCha20Cipher cipher = new ChaCha20Cipher(derivedKey, iv);
+      MemUtil.ZeroByteArray(derivedKey);
 
       byte[] bKey = pbKey.ReadData();
       cipher.Encrypt(bKey, 0, bKey.Length);
 
-      byte[] result = new byte[iv.Length + bKey.Length];
-      iv.CopyTo(result, 0);
-      bKey.CopyTo(result, iv.Length);
+      // Package structure: [ Salt (16 bytes) | IV (12 bytes) | Ciphertext (...) ]
+      byte[] result = new byte[salt.Length + iv.Length + bKey.Length];
+      salt.CopyTo(result, 0);
+      iv.CopyTo(result, salt.Length);
+      bKey.CopyTo(result, salt.Length + iv.Length);
+      
       MemUtil.ZeroByteArray(bKey);
 
       var pbResult = new ProtectedBinary(true, result);
@@ -527,26 +536,54 @@ namespace LockAssist
     private static ProtectedBinary DecryptKey(ProtectedString QuickUnlockKey, ProtectedBinary pbCrypted)
     {
       byte[] crypted = pbCrypted.ReadData();
+      
+      // Extract the 16-byte salt
+      byte[] salt = new byte[16];
+      Array.Copy(crypted, salt, salt.Length);
+      
+      // Extract the 12-byte IV
       byte[] iv = new byte[12];
-      Array.Copy(crypted, iv, iv.Length);
+      Array.Copy(crypted, salt.Length, iv, 0, iv.Length);
 
-      byte[] cryptedKey = new byte[crypted.Length - iv.Length];
-      Array.Copy(crypted, iv.Length, cryptedKey, 0, cryptedKey.Length);
+      // Extract the ciphertext
+      byte[] cryptedKey = new byte[crypted.Length - salt.Length - iv.Length];
+      Array.Copy(crypted, salt.Length + iv.Length, cryptedKey, 0, cryptedKey.Length);
 
-      ChaCha20Cipher cipher = new ChaCha20Cipher(AdjustQuickUnlockKey(QuickUnlockKey), iv);
+      // Derive the key using the extracted salt
+      byte[] derivedKey = AdjustQuickUnlockKey(QuickUnlockKey, salt);
+      ChaCha20Cipher cipher = new ChaCha20Cipher(derivedKey, iv);
+      MemUtil.ZeroByteArray(derivedKey);
+      
       cipher.Decrypt(cryptedKey, 0, cryptedKey.Length);
       ProtectedBinary pbDecrypted = new ProtectedBinary(true, cryptedKey);
+      
       MemUtil.ZeroByteArray(cryptedKey);
+      MemUtil.ZeroByteArray(crypted); // Clear the dumped buffer
       return pbDecrypted;
     }
 
-    private static byte[] AdjustQuickUnlockKey(ProtectedString QuickUnlockKey)
+    private static byte[] AdjustQuickUnlockKey(ProtectedString QuickUnlockKey, byte[] salt)
     {
       byte[] bUtf8 = QuickUnlockKey.ReadUtf8();
-      SHA256Managed sha = new SHA256Managed();
-      byte[] result = sha.ComputeHash(bUtf8);
+      byte[] current = new byte[bUtf8.Length + salt.Length];
+      
+      // Combine the PIN and the salt
+      Buffer.BlockCopy(bUtf8, 0, current, 0, bUtf8.Length);
+      Buffer.BlockCopy(salt, 0, current, bUtf8.Length, salt.Length);
+      
+      // Perform Key Stretching (100,000 iterations) to mitigate brute-forcing of short PINs
+      using (SHA256Managed sha = new SHA256Managed())
+      {
+          for (int i = 0; i < 100000; i++)
+          {
+              byte[] next = sha.ComputeHash(current);
+              MemUtil.ZeroByteArray(current);
+              current = next;
+          }
+      }
+      
       MemUtil.ZeroByteArray(bUtf8);
-      return result;
+      return current;
     }
   }
 }
