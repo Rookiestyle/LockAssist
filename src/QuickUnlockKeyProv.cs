@@ -508,11 +508,11 @@ namespace LockAssist
 
     private static ProtectedBinary EncryptKey(ProtectedString QuickUnlockKey, ProtectedBinary pbKey)
     {
-      // Generate a random 16-byte salt and 12-byte IV for this encryption session
+      // generate random 16-byte salt and 12-byte IV for this encryption session
       byte[] salt = CryptoRandom.Instance.GetRandomBytes(16);
       byte[] iv = CryptoRandom.Instance.GetRandomBytes(12);
       
-      // Derive a secure 256-bit key using the stretched KDF
+      // derive 256-bit key using PBKDF2
       byte[] derivedKey = AdjustQuickUnlockKey(QuickUnlockKey, salt);
       ChaCha20Cipher cipher = new ChaCha20Cipher(derivedKey, iv);
       MemUtil.ZeroByteArray(derivedKey);
@@ -520,13 +520,16 @@ namespace LockAssist
       byte[] bKey = pbKey.ReadData();
       cipher.Encrypt(bKey, 0, bKey.Length);
 
-      // Package structure: [ Salt (16 bytes) | IV (12 bytes) | Ciphertext (...) ]
+      // structure: [ Salt (16 bytes) | IV (12 bytes) | Ciphertext (...) ]
       byte[] result = new byte[salt.Length + iv.Length + bKey.Length];
-      salt.CopyTo(result, 0);
-      iv.CopyTo(result, salt.Length);
-      bKey.CopyTo(result, salt.Length + iv.Length);
+      Array.Copy(salt, 0, result, 0, salt.Length);
+      Array.Copy(iv, 0, result, salt.Length, iv.Length);
+      Array.Copy(bKey, 0, result, salt.Length + iv.Length, bKey.Length);
       
+      // wipe plaintext master key, unencrypted copies, and session parameters from memory
       MemUtil.ZeroByteArray(bKey);
+      MemUtil.ZeroByteArray(salt);
+      MemUtil.ZeroByteArray(iv);
 
       var pbResult = new ProtectedBinary(true, result);
       MemUtil.ZeroByteArray(result);
@@ -535,55 +538,51 @@ namespace LockAssist
 
     private static ProtectedBinary DecryptKey(ProtectedString QuickUnlockKey, ProtectedBinary pbCrypted)
     {
-      byte[] crypted = pbCrypted.ReadData();
+      byte[] crypted = pbCrypted.ReadData(); // must be wiped
       
-      // Extract the 16-byte salt
+      // extract 16-byte salt
       byte[] salt = new byte[16];
-      Array.Copy(crypted, salt, salt.Length);
+      Array.Copy(crypted, 0, salt, 0, salt.Length);
       
-      // Extract the 12-byte IV
+      // extract 12-byte IV
       byte[] iv = new byte[12];
       Array.Copy(crypted, salt.Length, iv, 0, iv.Length);
 
-      // Extract the ciphertext
+      // extract ciphertext
       byte[] cryptedKey = new byte[crypted.Length - salt.Length - iv.Length];
       Array.Copy(crypted, salt.Length + iv.Length, cryptedKey, 0, cryptedKey.Length);
 
-      // Derive the key using the extracted salt
+      // derive key using extracted salt
       byte[] derivedKey = AdjustQuickUnlockKey(QuickUnlockKey, salt);
       ChaCha20Cipher cipher = new ChaCha20Cipher(derivedKey, iv);
       MemUtil.ZeroByteArray(derivedKey);
       
+      // decrypt in place
       cipher.Decrypt(cryptedKey, 0, cryptedKey.Length);
       ProtectedBinary pbDecrypted = new ProtectedBinary(true, cryptedKey);
       
+      // wipe all intermediate buffers from memory
       MemUtil.ZeroByteArray(cryptedKey);
-      MemUtil.ZeroByteArray(crypted); // Clear the dumped buffer
+      MemUtil.ZeroByteArray(salt);
+      MemUtil.ZeroByteArray(iv);
+      MemUtil.ZeroByteArray(crypted); 
+      
       return pbDecrypted;
     }
 
     private static byte[] AdjustQuickUnlockKey(ProtectedString QuickUnlockKey, byte[] salt)
     {
-      byte[] bUtf8 = QuickUnlockKey.ReadUtf8();
-      byte[] current = new byte[bUtf8.Length + salt.Length];
+      byte[] bUtf8 = QuickUnlockKey.ReadUtf8(); // must be wiped
+      byte[] derivedKey;
       
-      // Combine the PIN and the salt
-      Buffer.BlockCopy(bUtf8, 0, current, 0, bUtf8.Length);
-      Buffer.BlockCopy(salt, 0, current, bUtf8.Length, salt.Length);
-      
-      // Perform Key Stretching (100,000 iterations) to mitigate brute-forcing of short PINs
-      using (SHA256Managed sha = new SHA256Managed())
+      // use standard PBKDF2 to mitigate brute-forcing of short PINs
+      using (var rfc2898 = new Rfc2898DeriveBytes(bUtf8, salt, 100000))
       {
-          for (int i = 0; i < 100000; i++)
-          {
-              byte[] next = sha.ComputeHash(current);
-              MemUtil.ZeroByteArray(current);
-              current = next;
-          }
+          derivedKey = rfc2898.GetBytes(32); // 256 bits required for ChaCha20
       }
       
       MemUtil.ZeroByteArray(bUtf8);
-      return current;
+      return derivedKey;
     }
   }
 }
