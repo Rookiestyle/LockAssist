@@ -572,16 +572,29 @@ namespace LockAssist
 
     private static byte[] AdjustQuickUnlockKey(ProtectedString QuickUnlockKey, byte[] salt)
     {
-      byte[] bUtf8 = QuickUnlockKey.ReadUtf8(); // must be wiped
-      byte[] derivedKey;
-      
-      // use standard PBKDF2 to mitigate brute-forcing of short PINs
-      using (var rfc2898 = new Rfc2898DeriveBytes(bUtf8, salt, 100000))
+      byte[] bUtf8 = QuickUnlockKey.ReadUtf8();
+      byte[] derivedKey = null;
+
+      try
       {
-          derivedKey = rfc2898.GetBytes(32); // 256 bits required for ChaCha20
+          KdfParameters kdfParams = new KdfParameters(KeePassLib.Cryptography.KeyDerivation.KdfUuid.Argon2);
+          
+          // these should be set to values that provide a good balance between security and performance for quick unlock scenarios
+          kdfParams.SetUInt64(KdfParameters.KeyArgon2Iterations, 3);
+          kdfParams.SetUInt64(KdfParameters.KeyArgon2Memory, 64 * 1024 * 1024); // memory cost (64 MiB)
+          kdfParams.SetUInt32(KdfParameters.KeyArgon2Parallelism, 2);           // thread count
+          kdfParams.SetBytes("S", salt); 
+
+          var argon2 = new KeePassLib.Cryptography.KeyDerivation.Argon2Kdf();
+          derivedKey = argon2.Generate(bUtf8, kdfParams);
       }
-      
-      MemUtil.ZeroByteArray(bUtf8);
+      finally
+      {
+          // Ensure the plaintext PIN is scrubbed from memory immediately
+          MemUtil.ZeroByteArray(bUtf8);
+      }
+
+      // The returned derivedKey will naturally be 256 bits (32 bytes)
       return derivedKey;
     }
   }
