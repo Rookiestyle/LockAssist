@@ -508,16 +508,28 @@ namespace LockAssist
 
     private static ProtectedBinary EncryptKey(ProtectedString QuickUnlockKey, ProtectedBinary pbKey)
     {
+      // generate random 16-byte salt and 12-byte IV for this encryption session
+      byte[] salt = CryptoRandom.Instance.GetRandomBytes(16);
       byte[] iv = CryptoRandom.Instance.GetRandomBytes(12);
-      ChaCha20Cipher cipher = new ChaCha20Cipher(AdjustQuickUnlockKey(QuickUnlockKey), iv);
+      
+      // derive 256-bit key using PBKDF2
+      byte[] derivedKey = AdjustQuickUnlockKey(QuickUnlockKey, salt);
+      ChaCha20Cipher cipher = new ChaCha20Cipher(derivedKey, iv);
+      MemUtil.ZeroByteArray(derivedKey);
 
       byte[] bKey = pbKey.ReadData();
       cipher.Encrypt(bKey, 0, bKey.Length);
 
-      byte[] result = new byte[iv.Length + bKey.Length];
-      iv.CopyTo(result, 0);
-      bKey.CopyTo(result, iv.Length);
+      // structure: [ Salt (16 bytes) | IV (12 bytes) | Ciphertext (...) ]
+      byte[] result = new byte[salt.Length + iv.Length + bKey.Length];
+      Array.Copy(salt, 0, result, 0, salt.Length);
+      Array.Copy(iv, 0, result, salt.Length, iv.Length);
+      Array.Copy(bKey, 0, result, salt.Length + iv.Length, bKey.Length);
+      
+      // wipe plaintext master key, unencrypted copies, and session parameters from memory
       MemUtil.ZeroByteArray(bKey);
+      MemUtil.ZeroByteArray(salt);
+      MemUtil.ZeroByteArray(iv);
 
       var pbResult = new ProtectedBinary(true, result);
       MemUtil.ZeroByteArray(result);
@@ -526,26 +538,99 @@ namespace LockAssist
 
     private static ProtectedBinary DecryptKey(ProtectedString QuickUnlockKey, ProtectedBinary pbCrypted)
     {
-      byte[] crypted = pbCrypted.ReadData();
+      byte[] crypted = pbCrypted.ReadData(); // must be wiped
+      
+      // extract 16-byte salt
+      byte[] salt = new byte[16];
+      Array.Copy(crypted, 0, salt, 0, salt.Length);
+      
+      // extract 12-byte IV
       byte[] iv = new byte[12];
-      Array.Copy(crypted, iv, iv.Length);
+      Array.Copy(crypted, salt.Length, iv, 0, iv.Length);
 
-      byte[] cryptedKey = new byte[crypted.Length - iv.Length];
-      Array.Copy(crypted, iv.Length, cryptedKey, 0, cryptedKey.Length);
+      // extract ciphertext
+      byte[] cryptedKey = new byte[crypted.Length - salt.Length - iv.Length];
+      Array.Copy(crypted, salt.Length + iv.Length, cryptedKey, 0, cryptedKey.Length);
 
-      ChaCha20Cipher cipher = new ChaCha20Cipher(AdjustQuickUnlockKey(QuickUnlockKey), iv);
+      // derive key using extracted salt
+      byte[] derivedKey = AdjustQuickUnlockKey(QuickUnlockKey, salt);
+      ChaCha20Cipher cipher = new ChaCha20Cipher(derivedKey, iv);
+      MemUtil.ZeroByteArray(derivedKey);
+      
+      // decrypt in place
       cipher.Decrypt(cryptedKey, 0, cryptedKey.Length);
       ProtectedBinary pbDecrypted = new ProtectedBinary(true, cryptedKey);
+      
+      // wipe all intermediate buffers from memory
       MemUtil.ZeroByteArray(cryptedKey);
+      MemUtil.ZeroByteArray(salt);
+      MemUtil.ZeroByteArray(iv);
+      MemUtil.ZeroByteArray(crypted); 
+      
       return pbDecrypted;
     }
 
-    private static byte[] AdjustQuickUnlockKey(ProtectedString QuickUnlockKey)
+    private static byte[] AdjustQuickUnlockKey(ProtectedString QuickUnlockKey, byte[] salt)
     {
-      byte[] bUtf8 = QuickUnlockKey.ReadUtf8();
-      SHA256Managed sha = new SHA256Managed();
-      byte[] result = sha.ComputeHash(bUtf8);
+      byte[] bUtf8 = QuickUnlockKey.ReadUtf8(); // must be wiped
+
+      // use standard PBKDF2 to mitigate brute-forcing of short PINs
+      var derivedKey = PBKDF2.DeriveKey(bUtf8, salt, 10000, 32); // 256 bits required for ChaCha20 
+      
       MemUtil.ZeroByteArray(bUtf8);
+      return derivedKey;
+    }
+  }
+
+  public static class PBKDF2
+  {
+    public static byte[] DeriveKey(
+        byte[] bUtf8,
+        byte[] salt,
+        int iterations,
+        int outputBytes)
+    {
+      using (var hmac = new HMACSHA256(bUtf8))
+      {
+        int hashLength = hmac.HashSize / 8; // 32 Bytes in case of SHA256
+        int blockCount = (int)Math.Ceiling((double)outputBytes / hashLength);
+
+        byte[] derived = new byte[outputBytes];
+        int offset = 0;
+
+        for (int i = 1; i <= blockCount; i++)
+        {
+          byte[] block = F(hmac, salt, iterations, i);
+
+          int toCopy = Math.Min(hashLength, outputBytes - offset);
+          Buffer.BlockCopy(block, 0, derived, offset, toCopy);
+          offset += toCopy;
+        }
+
+        return derived;
+      }
+    }
+
+    private static byte[] F(HMAC hmac, byte[] salt, int iterations, int blockIndex)
+    {
+      byte[] intBlock = BitConverter.GetBytes(blockIndex);
+      if (BitConverter.IsLittleEndian)
+        Array.Reverse(intBlock);
+
+      byte[] input = new byte[salt.Length + 4];
+      Buffer.BlockCopy(salt, 0, input, 0, salt.Length);
+      Buffer.BlockCopy(intBlock, 0, input, salt.Length, 4);
+
+      byte[] u = hmac.ComputeHash(input);
+      byte[] result = (byte[])u.Clone();
+
+      for (int i = 1; i < iterations; i++)
+      {
+        u = hmac.ComputeHash(u);
+        for (int j = 0; j < result.Length; j++)
+          result[j] ^= u[j];
+      }
+
       return result;
     }
   }
